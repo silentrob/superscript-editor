@@ -1,0 +1,27 @@
+html(lang="en")
+  head
+    include ./includes/head.jade
+  body
+    nav(class="navbar navbar-default")
+      div(class="container-fluid")
+        div(class="navbar-header")
+          a(class="navbar-brand" href="/") SSC Editor
+        div
+          ul(class="nav navbar-nav")
+            li
+              a(href="/topics") Topics
+            li
+              a(href="/gambits") Gambits
+        
+          form.navbar-form.navbar-left(role='search')
+            .form-group
+              input.form-control(type='text', placeholder='Search')
+            button.btn.btn-default(type='submit') Search
+
+          ul(class="nav navbar-nav navbar-right")
+            li
+              a(href="/docs") Docs            
+
+
+
+    block content

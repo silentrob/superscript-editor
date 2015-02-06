@@ -8,11 +8,26 @@ module.exports = function(models) {
     },
 
     post: function(req, res) {
+      var topicName = req.body.name.toLowerCase();
+      topicName = topicName.replace(/\s/g,"_");
+
       var keywords = req.body.keywords.split(",");
       var system = (req.body.keywords == "on") ? true : false;
-      new models.topic({name: req.body.name, keywords: keywords, system: system }).save(function(err){
-        res.redirect('/topics');
-      });
+
+      if (topicName != "") {
+        new models.topic({name: topicName, keywords: keywords, system: system }).save(function(err){
+          if (req.body.name !== topicName) {
+            req.flash('success', 'Gambit Created, but we changed the name.');
+          } else {
+            req.flash('success', 'Gambit Created');  
+          }
+          
+          res.redirect('/topics');
+        });        
+      } else {
+        req.flash('error', 'Topic Name is required.')
+        res.redirect("/topics");
+      }
     },
 
     delete: function (req, res) {

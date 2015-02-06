@@ -6,12 +6,15 @@ block content
         h1 Topic List
         p Topics are a logical grouping of Gambits.
 
+      - if (success_messages.length != 0)
+        p.bg-success= success_messages
 
       table.table.table-bordered.table-condensed
         thead
           tr
             th Name
             th Keywords
+            th(style="width:25px") GC
             th Action
 
         - for (var i = 0; i < topics.length; i++)
@@ -19,9 +22,14 @@ block content
             td
               a(href="/topics/#{topics[i].id}")= topics[i].name
             td= topics[i].keywords
+            td= topics[i].gambits.length
             td
               a(data-id="#{topics[i].id}").js-del.btn.btn-danger.btn-xs Delete
     
+
+    - if (error_messages.length != 0)
+      p.bg-warning= error_messages
+
 
     form.form-horizontal(action="/topics", method="post")
       .form-group
@@ -52,14 +60,13 @@ block content
         showCancelButton: true,   
         confirmButtonColor: "#DD6B55",   
         confirmButtonText: "Yes, delete it!",   
-        closeOnConfirm: false 
+        closeOnConfirm: true 
       }, function(){   
         $.ajax({ 
           url: '/topics/' + id, 
           type: 'DELETE',
           success: function(result) {
             $(e.target).parents('tr').remove();
-            swal("Deleted!", "Gone", "success"); 
           }
         });
 

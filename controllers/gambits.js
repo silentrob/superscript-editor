@@ -3,7 +3,7 @@ module.exports = function(models) {
   return {
     index : function(req, res) {
       models.topic.find({}, function(err, topics){
-        models.gambit.find({}, function(err, gambits){
+        models.gambit.find({}).populate('replies').exec(function(err, gambits){
           res.render('gambits/index', {gambits: gambits, topics:topics });
         });
       });  
@@ -15,15 +15,37 @@ module.exports = function(models) {
         req.flash('error', 'Input is Required.')
         res.redirect('/gambits');
       } else {
+
+        console.log(req.body)
         var isQuestion = (req.body.isQuestion == "on") ? true : false;
         var gambitParams = {
           input: req.body.input,
-          isQuestion: isQuestion
+          isQuestion: isQuestion,
+          qType: req.body.qType
         }
-        new models.gambit(gambitParams).save(function(err){
-          req.flash('succes', 'Gambit Created')
-          res.redirect('/gambits');
-        });
+        var gambit = new models.gambit(gambitParams);
+      
+        if (req.body.reply != "") {
+          var replyParams = {
+            reply: req.body.reply
+          }
+          
+          models.reply.create(replyParams, function(err,reply){
+            gambit.replies.addToSet(reply._id);
+            gambit.save(function(err){
+              req.flash('success', 'Gambit Created')
+              res.redirect('/gambits');
+            });
+
+          });
+
+        } else {
+          // No Reply Obj.. Just trigger
+          gambit.save(function(err){
+            req.flash('success', 'Gambit Created')
+            res.redirect('/gambits');
+          });
+        }
       }
     },
 

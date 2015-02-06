@@ -4,22 +4,6 @@ var mongoose = require('mongoose');
 var sfact = require("sfacts");
 
 var express = require('express');
-
-// create "global" connection
-// mongoose.connect('localhost', 'test-1249');
-// mongoose.connection.on('open', function () {
-
-//   // after opening, create a document
-//   var models = require('superscript/lib/topics/index')(mongoose, factSystem);
-  
-//   models.topic.create({ name: 'woot' + Math.random() }, function(err, a){
-
-//     a.save(function(err) {
-//       console.log("----?", a);
-//     });
-//   });
-// });
-
 var app = express();
  
 var port = process.env.PORT || 3000;
@@ -61,11 +45,8 @@ conn.once('open', function() {
   var server = app.listen(port, function () {
     var host = server.address().address
     var port = server.address().port
-
-    console.log('\n\n\tSuperScript Community Editor.\n\tListening at http://%s:%s\n\tBot Name: %s\n\n', host, port, dbName)
-    
+    console.log('\n\n\tSuperScript Community Editor.\n\tListening at http://%s:%s\n\tBot Name: %s\n\n\tSwitch or create a new bot by starting `BOT=<name> node app.js`\n\n', host, port, dbName)
   });
-
 });
 
 module.exports = app;

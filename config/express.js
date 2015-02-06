@@ -11,10 +11,10 @@ var cookieSession = require('cookie-session');
 var bodyParser = require('body-parser');
 var methodOverride = require('method-override');
 var csrf = require('csurf');
+var multer = require('multer'); 
 
 var flash = require('connect-flash');
 var helpers = require('view-helpers');
-var config = require('config');
 var pkg = require('../package.json');
 
 var env = process.env.NODE_ENV || 'development';
@@ -25,10 +25,7 @@ var env = process.env.NODE_ENV || 'development';
 
 module.exports = function (app) {
 
-  // Compression middleware (should be placed before express.static)
-  app.use(compression({
-    threshold: 512
-  }));
+  app.use(compression({ threshold: 512 }));
 
   // Static files middleware
   app.use(express.static('./public'));
@@ -54,7 +51,6 @@ module.exports = function (app) {
   // set views path, template engine and default layout
   app.set('view engine', 'jade');
   app.set('views', './views')
-  // app.set('views', config.root + '/app/views');
 
   // expose package.json to views
   app.use(function (req, res, next) {
@@ -63,11 +59,16 @@ module.exports = function (app) {
     next();
   });
 
+  
+
   // bodyParser should be above methodOverride
   app.use(bodyParser.urlencoded({
     extended: true
   }));
+
   app.use(bodyParser.json());
+  app.use(multer());
+  
   app.use(methodOverride(function (req, res) {
     if (req.body && typeof req.body === 'object' && '_method' in req.body) {
       // look in urlencoded POST bodies and delete it
@@ -77,6 +78,9 @@ module.exports = function (app) {
     }
   }));
 
+  // app.use(express.cookieParser('keyboard cat'));
+  // app.use(express.session({ cookie: { maxAge: 60000 }}));
+
   // cookieParser should be above session
   app.use(cookieParser());
   app.use(cookieSession({ secret: 'secret' }));
@@ -84,17 +88,12 @@ module.exports = function (app) {
   // connect flash for flash messages - should be declared after sessions
   app.use(flash());
 
+  app.use(function(req, res, next){
+    res.locals.success_messages = req.flash('success');
+    res.locals.error_messages = req.flash('error');
+    next();
+  });
+
   // should be declared after session and flash
   app.use(helpers(pkg.name));
-
-  // adds CSRF support
-  if (process.env.NODE_ENV !== 'test') {
-    app.use(csrf());
-
-    // This could be moved to view-helpers :-)
-    app.use(function(req, res, next){
-      res.locals.csrf_token = req.csrfToken();
-      next();
-    });
-  }
 };

@@ -1,7 +1,14 @@
-exports.index = function(req, res) {
-  res.render('index', { title: 'SuperScript Community Editor'});
-}
 
-exports.docs = function(req, res) {
-  res.render('docs');
+module.exports = function(models) {
+
+  return {
+    index: function(req, res) {
+      res.render('index', { title: 'SuperScript Community Editor'});
+    },
+
+    docs: function(req, res) {
+      res.render('docs');
+    }
+    
+  }
 }

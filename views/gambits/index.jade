@@ -3,4 +3,85 @@ block content
   .container
     .row
       .page-header
-        h1 Gambits 
+        h1 Gambit List
+        p Gambits are the primary building block of the system. They have two parts, a Trigger, and Reply.
+
+      
+      - if (success_messages.length != 0)
+        p.bg-success= success_messages
+
+
+
+      table.table.table-bordered.table-condensed
+        thead
+          tr
+            th(style="width:25px") Q
+            th Input
+            th Keywords
+            th Action
+
+        - for (var i = 0; i < gambits.length; i++)
+          tr 
+            td= (gambits[i].isQuestion) ? "?":"+"
+            td
+              a(href="/gambits/#{gambits[i]._id}")= gambits[i].input 
+            td= gambits[i].keywords
+            td
+              a(data-id="#{gambits[i]._id}").js-del.btn.btn-danger.btn-xs Delete
+    
+
+    - if (error_messages.length != 0)
+      p.bg-warning= error_messages
+
+    form.form-horizontal(action="/gambits", method="post")
+      .form-group
+        label.col-sm-2.control-label(for='formName') Input
+        .col-sm-10
+          input#formName.form-control(type='text', name="input", placeholder='Input')
+      .form-group
+        label.col-sm-2.control-label(for='keywords') Keywords
+        .col-sm-10
+          input#keywords.form-control(type='text', name="keywords", placeholder='Topic Keywords')
+      .form-group
+        .col-sm-offset-2.col-sm-10
+          .checkbox
+            label
+              input(type='checkbox', name="isQuestion") 
+              | Is Question
+
+      .form-group
+        label.col-sm-2.control-label(for='topics') Topic(s)
+        .col-sm-offset-2.col-sm-10
+          select#topics.form-control(multiple='true', name="topics")
+            - for (var i = 0; i < topics.length; i++)
+              option(value="#{topics[i]._id}")= topics[i].name
+
+      .form-group
+        .col-sm-offset-2.col-sm-10
+          button.btn.btn-default(type='submit') Create Gambit
+
+  script.
+    $(".js-del").click(function(e){
+      var id = $(e.target).data('id');
+      swal({
+        title: "Are you sure?",   
+        text: "You will not be able to recover this gambit!",   
+        type: "warning",   
+        showCancelButton: true,   
+        confirmButtonColor: "#DD6B55",   
+        confirmButtonText: "Yes, delete it!",   
+        closeOnConfirm: true 
+      }, function(){   
+        $.ajax({ 
+          url: '/gambits/' + id, 
+          type: 'DELETE',
+          success: function(result) {
+            $(e.target).parents('tr').remove();
+            //- swal("Deleted!", "Gone", "success"); 
+          }
+        });
+
+      });
+    })
+
+

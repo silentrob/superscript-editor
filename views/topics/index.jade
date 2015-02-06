@@ -3,4 +3,67 @@ block content
   .container
     .row
       .page-header
-        h1 Topics Index
+        h1 Topic List
+        p Topics are a logical grouping of Gambits.
+
+
+      table.table.table-bordered.table-condensed
+        thead
+          tr
+            th Name
+            th Keywords
+            th Action
+
+        - for (var i = 0; i < topics.length; i++)
+          tr 
+            td
+              a(href="/topics/#{topics[i].id}")= topics[i].name
+            td= topics[i].keywords
+            td
+              a(data-id="#{topics[i].id}").js-del.btn.btn-danger.btn-xs Delete
+    
+
+    form.form-horizontal(action="/topics", method="post")
+      .form-group
+        label.col-sm-2.control-label(for='formName') Topic Name
+        .col-sm-10
+          input#formName.form-control(type='text', name="name", placeholder='Topic Name')
+      .form-group
+        label.col-sm-2.control-label(for='keywords') Keywords
+        .col-sm-10
+          input#keywords.form-control(type='text', name="keywords", placeholder='Topic Keywords')
+      .form-group
+        .col-sm-offset-2.col-sm-10
+          .checkbox
+            label
+              input(type='checkbox', name="system") 
+              | System Topic
+      .form-group
+        .col-sm-offset-2.col-sm-10
+          button.btn.btn-default(type='submit') Create Topic
+
+  script.
+    $(".js-del").click(function(e){
+      var id = $(e.target).data('id');
+      swal({
+        title: "Are you sure?",   
+        text: "You will not be able to recover this topic!",   
+        type: "warning",   
+        showCancelButton: true,   
+        confirmButtonColor: "#DD6B55",   
+        confirmButtonText: "Yes, delete it!",   
+        closeOnConfirm: false 
+      }, function(){   
+        $.ajax({ 
+          url: '/topics/' + id, 
+          type: 'DELETE',
+          success: function(result) {
+            $(e.target).parents('tr').remove();
+            swal("Deleted!", "Gone", "success"); 
+          }
+        });
+
+      });
+    })
+
+

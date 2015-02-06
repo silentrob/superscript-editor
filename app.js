@@ -1,52 +1,71 @@
 // The main application script, ties everything together.
- 
-var express = require('express');
+
 var mongoose = require('mongoose');
-var superscript = require('superscript');
+var sfact = require("sfacts");
+
+var express = require('express');
+
+// create "global" connection
+// mongoose.connect('localhost', 'test-1249');
+// mongoose.connection.on('open', function () {
+
+//   // after opening, create a document
+//   var models = require('superscript/lib/topics/index')(mongoose, factSystem);
+  
+//   models.topic.create({ name: 'woot' + Math.random() }, function(err, a){
+
+//     a.save(function(err) {
+//       console.log("----?", a);
+//     });
+//   });
+// });
 
 var app = express();
  
 var port = process.env.PORT || 3000;
 var dbName = process.env.BOT || "testbot";
 
-var config = {
-  db: 'mongodb://localhost/' + dbName
-}
- // Connect to mongodb
-var connect = function () {
-  var options = { server: { socketOptions: { keepAlive: 1 } } };
-  mongoose.connect(config.db, options);
-};
+var config = { db: 'mongodb://localhost/' + dbName }
+var options = { server: { socketOptions: { keepAlive: 1 } } };
+var factSystem = sfact.create(dbName);
 
-// Connect to Mongo when the app initializes
-connect();
+mongoose.connect(config.db, options);
+var conn = mongoose.connection;
 
-mongoose.connection.on('error', console.log);
-mongoose.connection.on('disconnected', connect);
- 
-require('./config/express')(app);
- 
-// set up the RESTful API, handler methods are defined in api.js
-var api = require('./controllers/api.js');
-var dash = require('./controllers/dashboard.js');
-var topics = require('./controllers/topics.js');
-var gambits = require('./controllers/gambits.js');
+conn.once('open', function() {
 
-// app.post('/thread', api.post);
-// app.get('/thread/:title.:format?', api.show);
-// app.get('/thread', api.list);
+  var models = require('superscript/lib/topics/index')(mongoose, factSystem);
 
-app.get('/', dash.index);
-app.get('/topics', topics.index);
-app.get('/gambits', gambits.index);
-app.get('/docs', dash.docs);
- 
+  require('./config/express')(app);
+   
+  // set up the RESTful API, handler methods are defined in api.js
 
-var server = app.listen(port, function () {
-  var host = server.address().address
-  var port = server.address().port
+  var dashRoutes = require('./controllers/dashboard')(models);
+  var gambitRoute = require('./controllers/gambits')(models);
+  var topicsRoute = require('./controllers/topics')(models);
 
-  console.log('\n\n\tSuperScript Community Editor.\n\tListening at http://%s:%s\n\tBot Name: %s\n\n', host, port, dbName)
-  
+  app.get('/', dashRoutes.index);
+  app.get('/docs', dashRoutes.docs);
+
+  app.get('/gambits', gambitRoute.index);
+  app.post('/gambits', gambitRoute.post); 
+  app.get('/gambits/:id', gambitRoute.show)
+  app.delete('/gambits/:id', gambitRoute.delete); 
+
+
+  app.get('/topics', topicsRoute.index);
+  app.post('/topics', topicsRoute.post); 
+  app.get('/topics/:id', topicsRoute.show)
+  app.delete('/topics/:id', topicsRoute.delete); 
+
+  var server = app.listen(port, function () {
+    var host = server.address().address
+    var port = server.address().port
+
+    console.log('\n\n\tSuperScript Community Editor.\n\tListening at http://%s:%s\n\tBot Name: %s\n\n', host, port, dbName)
+    
+  });
+
 });
 
+module.exports = app;

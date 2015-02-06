@@ -9,6 +9,16 @@ module.exports = function(models) {
       });  
     },
 
+    addreply: function(req, res) {
+      req.flash('error', 'Not Implemented yet.')
+      res.redirect('/gambits/' + req.params.id);
+    },
+
+    update: function(req, res) {
+      req.flash('error', 'Not Implemented yet.')
+      res.redirect('/gambits/' + req.params.id);
+    },
+
     post: function(req, res) {
 
       if (req.body.input == "") {

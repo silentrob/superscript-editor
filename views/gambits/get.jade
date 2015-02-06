@@ -4,6 +4,60 @@ block content
     .row
       .page-header
         h1 Show
+
+        - if (success_messages.length != 0)
+          p.bg-success= success_messages
+
         code
           pre= gambit
     
+
+    - if (error_messages.length != 0)
+      p.bg-warning= error_messages
+
+    form.form-horizontal(action="/gambits/#{gambit._id}", method="post")
+      input(type="hidden", name="_method", value="put")
+      .form-group
+        label.col-sm-2.control-label(for='formName') Input
+        .col-sm-10
+          input#formName.form-control.input-lg(type='text', name="input", placeholder='Input', value='#{gambit.input}')
+      .form-group
+        .col-sm-offset-2.col-sm-10
+          .checkbox
+            label
+              if gambit.isQuestion
+                input#js-isQuestion(type='checkbox', name="isQuestion", checked="true") 
+                | Match Questions
+              else 
+                input#js-isQuestion(type='checkbox', name="isQuestion") 
+                | Match Questions
+
+      .form-group.js-questionType
+        label.col-sm-2.control-label(for='reply') Question Type
+        .col-xs-3
+          select#qtype.form-control(name="qType")
+            option(value="") None
+            option(value="WH") Question word
+            option(value="YN") Yes/No
+            option(value="TG") Tag Question
+            option(value="CH") Choice Question
+
+      .form-group
+        label.col-sm-2.control-label(for='reply') Replies
+        .col-sm-8
+          input#reply.form-control(type='text', name="reply", placeholder='Reply')
+
+
+      .form-group
+        .col-sm-offset-2.col-sm-10
+          button.btn.btn-default(type='submit') Update Gambit
+
+      script.
+      
+        if (!$('input#js-isQuestion').is(':checked')) {
+          $('.js-questionType').addClass('hidden');
+        }
+
+        $("#js-isQuestion").click(function(e){
+          $('.js-questionType').toggleClass('hidden');
+        })

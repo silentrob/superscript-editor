@@ -32,7 +32,9 @@ conn.once('open', function() {
   app.get('/docs', dashRoutes.docs);
 
   app.get('/gambits', gambitRoute.index);
-  app.post('/gambits', gambitRoute.post); 
+  app.post('/gambits', gambitRoute.post);
+  app.post('/gambits/:id/addreply', gambitRoute.addreply); 
+  app.put('/gambits/:id', gambitRoute.update); 
   app.get('/gambits/:id', gambitRoute.show)
   app.delete('/gambits/:id', gambitRoute.delete); 
 

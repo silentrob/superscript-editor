@@ -44,10 +44,10 @@ block content
         .col-sm-offset-2.col-sm-10
           .checkbox
             label
-              input(type='checkbox', name="isQuestion") 
+              input#js-isQuestion(type='checkbox', name="isQuestion") 
               | Is Question
 
-      .form-group
+      .form-group.js-questionType(class="hidden")
         label.col-sm-2.control-label(for='reply') Question Type
         .col-xs-3
           select#qtype.form-control(name="qType")
@@ -69,6 +69,11 @@ block content
           button.btn.btn-default(type='submit') Create Gambit
 
   script.
+
+    $("#js-isQuestion").click(function(e){
+      $('.js-questionType').toggleClass('hidden');
+    })
+
     $(".js-del").click(function(e){
       var id = $(e.target).data('id');
       swal({

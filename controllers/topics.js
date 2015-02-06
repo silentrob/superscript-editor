@@ -1,4 +1,4 @@
-
+var _ = require("underscore");
 module.exports = function(models) {
   return {
     index : function(req, res) {
@@ -21,12 +21,37 @@ module.exports = function(models) {
           } else {
             req.flash('success', 'Gambit Created');  
           }
-          
+
           res.redirect('/topics');
         });        
       } else {
         req.flash('error', 'Topic Name is required.')
         res.redirect("/topics");
+      }
+    },
+
+    atf: function(req, res) {
+      // console.log(req.body);
+      if (req.body.topics) {
+        var topics = req.body.topics
+        return models.topic.findById(req.params.id, function(error, topic) {
+          if (_.isString(topics)) {
+            topics = [topics];
+          }
+
+          for (var i = 0; i < topics.length; i++) {
+            topic.gambits.addToSet(topics[i]);  
+          }
+          
+          topic.save(function(err){
+            req.flash('success', 'Topic Updated')
+            res.redirect("/topics/" + req.params.id);
+          });
+
+        });
+      } else {
+        req.flash('error', 'No Gambits selected.')
+        res.redirect("/topics/" + req.params.id);
       }
     },
 
@@ -48,8 +73,11 @@ module.exports = function(models) {
 
     show: function(req, res) {
       return models.topic.findById(req.params.id, function(error, topic) {
-        res.render('topics/get', {topic: topic });
-      })
+        // We bring in all the gambits so we can add them to the topic.
+        models.gambit.find({},'_id, input', function(error, gambits) {
+          res.render('topics/get', {topic: topic, gambits:gambits });
+        });
+      });
     }
   }
 }

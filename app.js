@@ -39,7 +39,9 @@ conn.once('open', function() {
 
   app.get('/topics', topicsRoute.index);
   app.post('/topics', topicsRoute.post); 
+  app.post('/topics/:id/atf', topicsRoute.atf); 
   app.get('/topics/:id', topicsRoute.show)
+  
   app.delete('/topics/:id', topicsRoute.delete); 
 
   var server = app.listen(port, function () {

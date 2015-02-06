@@ -3,7 +3,32 @@ block content
   .container
     .row
       .page-header
-        h1 Show
+        h1 Topic '#{topic.name}'
+
+        - if (success_messages.length != 0)
+          p.bg-success= success_messages
+
         code
           pre= topic
+
+      
+      - if (error_messages.length != 0)
+        p.bg-warning= error_messages
+
+      form.form-horizontal(action="/topics/#{topic._id}/atf", method="post")
+        .form-group
+          label.col-sm-2.control-label(for='gambits') Gambits
+          .col-xs-4
+            select#gambits.form-control(multiple='true', name="topics")
+              - for (var i = 0; i < gambits.length; i++)
+                - if (topic.gambits.indexOf(gambits[i]._id) == -1)
+                  option(value="#{gambits[i]._id}")= gambits[i].input
+
+        .form-group
+          .col-sm-offset-2.col-sm-10
+            button.btn.btn-default(type='submit') Add Gambit(s) to Topic
+
+
+
+
     

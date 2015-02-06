@@ -24,6 +24,7 @@
     "multer": "^0.1.7",
     "sfacts": "0.0.8",
     "superscript": "0.6.1",
+    "underscore": "^1.7.0",
     "view-helpers": "^0.1.5"
   }
 }

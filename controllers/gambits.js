@@ -9,9 +9,9 @@ module.exports = function(models) {
       });  
     },
 
-    addreply: function(req, res) {
-      req.flash('error', 'Not Implemented yet.')
-      res.redirect('/gambits/' + req.params.id);
+    // Add a reply to a gambit
+    reply: function(req, res) {
+      req.send(201);
     },
 
     update: function(req, res) {
@@ -25,8 +25,6 @@ module.exports = function(models) {
         req.flash('error', 'Input is Required.')
         res.redirect('/gambits');
       } else {
-
-        console.log(req.body)
         var isQuestion = (req.body.isQuestion == "on") ? true : false;
         var gambitParams = {
           input: req.body.input,
@@ -76,7 +74,7 @@ module.exports = function(models) {
     },
 
     show: function(req, res) {
-      return models.gambit.findById(req.params.id, function(error, gambit) {
+      return models.gambit.findById(req.params.id).populate('replies').exec(function(error, gambit) {
         res.render('gambits/get', {gambit: gambit });
       })
     }

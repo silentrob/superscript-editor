@@ -10,7 +10,6 @@ block content
 
         code
           pre= gambit
-    
 
     - if (error_messages.length != 0)
       p.bg-warning= error_messages
@@ -42,11 +41,16 @@ block content
             option(value="TG") Tag Question
             option(value="CH") Choice Question
 
-      .form-group
-        label.col-sm-2.control-label(for='reply') Replies
-        .col-sm-8
-          input#reply.form-control(type='text', name="reply", placeholder='Reply')
-
+      #replyGroup
+        - for (var i = 0; i < gambit.replies.length; i++)
+          .form-group
+            if i === 0
+              label.col-sm-2.control-label(for='reply') Replies
+            .col-sm-6
+              input#replys.form-control(type='text', name="reply", placeholder='Reply', value="#{gambit.replies[i].reply}")
+            .col-sm-4
+              a.js-replySubmit.btn.btn-success
+                span.glyphicon.glyphicon-ok(aria-hidden='true') 
 
       .form-group
         .col-sm-offset-2.col-sm-10
@@ -54,6 +58,36 @@ block content
 
       script.
       
+        $(".js-replySubmit").click(function(e){
+          console.log("Submit Reply");
+
+          user_data = {
+            name: "Henrik Joreteg",
+            twitter: "HenrikJoreteg",
+            employer: "&yet",
+            job_title: "JS nerd"
+          };
+
+          // Here's all the magic.
+          console.log("----", ich)
+          var user = ich.reply(user_data);
+
+          // append it to the list, tada!
+          //Now go do something more useful with this.
+          $('#replyGroup').append(user);
+
+
+          $.ajax({ 
+            url: '/gambits/#{gambit._id}/reply', 
+            type: 'POST',
+            success: function(result) {
+              $(e.target).parents('tr').remove();
+              //- swal("Deleted!", "Gone", "success"); 
+            }
+          });
+
+        });
+
         if (!$('input#js-isQuestion').is(':checked')) {
           $('.js-questionType').addClass('hidden');
         }
@@ -61,3 +95,17 @@ block content
         $("#js-isQuestion").click(function(e){
           $('.js-questionType').toggleClass('hidden');
         })
+
+      script(id="reply" type="text/html").
+        <div class="form-group">
+          <div class="col-sm-6 col-sm-offset-2">
+            <input class="form-control" placeholder="Reply">
+          </div>
+          <div class="col-sm-4">
+            <a href="#" class="js-replySubmit btn btn-success">
+              <span class="glyphicon glyphicon-ok" aria-hidden='true'>
+            </a>
+          </div>
+        </div>
+
+

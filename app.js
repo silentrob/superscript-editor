@@ -33,11 +33,13 @@ conn.once('open', function() {
 
   app.get('/gambits', gambitRoute.index);
   app.post('/gambits', gambitRoute.post);
-  app.post('/gambits/:id/addreply', gambitRoute.reply); 
+  
+  app.post('/gambits/:id/reply', gambitRoute.reply); 
+  app.get('/gambits/:id/replies', gambitRoute.replies); 
   app.put('/gambits/:id', gambitRoute.update); 
   app.get('/gambits/:id', gambitRoute.show)
   app.delete('/gambits/:id', gambitRoute.delete); 
-
+  app.delete('/gambits/:id/reply', gambitRoute.deleteReply);
 
   app.get('/topics', topicsRoute.index);
   app.post('/topics', topicsRoute.post); 

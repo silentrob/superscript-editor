@@ -1,3 +1,9 @@
 .bg-warning, .bg-success {
   padding:15px;
 }
+
+.select-group-control {
+  border-top-left-radius: 0px;
+  border-bottom-left-radius: 0px;
+  -webkit-appearance: none;  
+}

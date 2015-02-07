@@ -1,4 +1,11 @@
 
+// Code to count how many capture groups
+// var arbitrary_regex = /(1(2(3)))(?:A)()4(?=B)[(C)][(]D[)]\(E\)(5)/;
+// var num_groups = (new RegExp(arbitrary_regex.toString() + '|')).exec('').length - 1;
+// alert(num_groups);
+
+// var num_groups = (new RegExp(re.toString() + '|')).exec('').length - 1;
+
 module.exports = function(models) {
   return {
     index : function(req, res) {
@@ -10,8 +17,36 @@ module.exports = function(models) {
     },
 
     // Add a reply to a gambit
+    deleteReply: function(req, res) {
+
+      var remMe = {$pull: {replies: req.body.replyId }};
+      models.gambit.findByIdAndUpdate(req.params.id, remMe, function(err, me) {
+        // We should also delete the reply object and not leave it orphaned.
+        models.reply.find({ id: req.body.replyId }).remove().exec();
+        res.sendStatus(200);
+      });
+    },
+
     reply: function(req, res) {
-      req.send(201);
+      var properties = {
+        reply: req.body.reply
+      };
+
+      models.reply.create(properties, function(err,rep){
+        rep.save(function(){
+          var addMe = {$addToSet: {replies: rep._id}};
+          models.gambit.findByIdAndUpdate(req.params.id, addMe, function(err, me) {
+            res.status(201).send(rep);  
+          });
+        });
+      });
+    },
+
+    // JSON endpoint to fetch all replies
+    replies: function(req, res) {
+      return models.gambit.findById(req.params.id).populate('replies').exec(function(err, gambit){
+        res.json(gambit.replies);
+      });
     },
 
     update: function(req, res) {
@@ -74,7 +109,7 @@ module.exports = function(models) {
     },
 
     show: function(req, res) {
-      return models.gambit.findById(req.params.id).populate('replies').exec(function(error, gambit) {
+      return models.gambit.findById(req.params.id).exec(function(error, gambit) {
         res.render('gambits/get', {gambit: gambit });
       })
     }

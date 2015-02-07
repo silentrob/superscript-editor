@@ -42,51 +42,97 @@ block content
             option(value="CH") Choice Question
 
       #replyGroup
-        - for (var i = 0; i < gambit.replies.length; i++)
-          .form-group
-            if i === 0
-              label.col-sm-2.control-label(for='reply') Replies
-            .col-sm-6
-              input#replys.form-control(type='text', name="reply", placeholder='Reply', value="#{gambit.replies[i].reply}")
-            .col-sm-4
-              a.js-replySubmit.btn.btn-success
-                span.glyphicon.glyphicon-ok(aria-hidden='true') 
+        //- - for (var i = 0; i <= gambit.replies.length ; i++)
+        //-   .form-group
+        //-     if i === 0
+        //-       label.col-sm-2.control-label(for='reply') Replies
+        //-     if (gambit.replies[i])                    
+        //-       .col-sm-6
+        //-         input.form-control(type='text', name="reply", placeholder='Reply', value="#{gambit.replies[i].reply}")
+        //-     else
+        //-       .col-sm-6.col-sm-offset-2
+        //-         input.form-control(type='text', name="reply", placeholder='Reply')
+        //-     .col-sm-4
+        //-       a.js-replySubmit.btn.btn-success
+        //-         span.glyphicon.glyphicon-plus(aria-hidden='true') 
+        //-       if (gambit.replies[i])
+        //-         a.js-replySubmit.btn.btn-danger
+        //-           span.glyphicon.glyphicon-remove(aria-hidden='true') 
+
 
       .form-group
         .col-sm-offset-2.col-sm-10
           button.btn.btn-default(type='submit') Update Gambit
 
       script.
-      
-        $(".js-replySubmit").click(function(e){
-          console.log("Submit Reply");
 
-          user_data = {
-            name: "Henrik Joreteg",
-            twitter: "HenrikJoreteg",
-            employer: "&yet",
-            job_title: "JS nerd"
-          };
+        $.get("/gambits/#{gambit._id}/replies", function(replies){
+          for (var i = 0; i < replies.length; i++) {
+            var reply = ich.reply(replies[i]);
+            $('#replyGroup').append(reply);
+          }
 
-          // Here's all the magic.
-          console.log("----", ich)
-          var user = ich.reply(user_data);
-
-          // append it to the list, tada!
-          //Now go do something more useful with this.
-          $('#replyGroup').append(user);
-
-
-          $.ajax({ 
-            url: '/gambits/#{gambit._id}/reply', 
-            type: 'POST',
-            success: function(result) {
-              $(e.target).parents('tr').remove();
-              //- swal("Deleted!", "Gone", "success"); 
-            }
-          });
+          var reply = ich.reply({});
+          $('#replyGroup').append(reply);
 
         });
+
+
+        $("body").on({
+          click:function(e){
+            e.preventDefault();
+            var replyString = $(this).parents('.js-reply-group').find('input').val();
+
+            if (replyString === "") {
+              swal("Ooops...", "Reply can not be empty", "error"); 
+            } else {
+              $.ajax({ 
+                url: '/gambits/#{gambit._id}/reply', 
+                type: 'POST',
+                data: {
+                  reply: replyString
+                },
+                success: function(result) {
+                  var reply = ich.reply();
+                  $('#replyGroup').append(reply);
+                }
+              });
+            }
+
+          }
+        }, ".js-replyAdd");
+        
+
+        $("body").on({
+          click:function(e){
+            e.preventDefault();
+            var $group = $(this).parents('.js-reply-group');
+            var replyId = $group.data('id')
+            swal({
+              title: "Are you sure?",   
+              text: "You will not be able to recover this reply!",   
+              type: "warning",   
+              showCancelButton: true,   
+              confirmButtonColor: "#DD6B55",   
+              confirmButtonText: "Yes, delete it!",   
+              closeOnConfirm: true 
+            }, function(){   
+              $.ajax({ 
+                url: '/gambits/#{gambit._id}/reply',
+                type: 'DELETE',
+                data: {
+                  replyId: replyId
+                },
+                success: function(result) {
+                  $group[0].remove();
+                }
+              });
+            });
+
+          }
+        }, ".js-replyDelete");
+
+        
 
         if (!$('input#js-isQuestion').is(':checked')) {
           $('.js-questionType').addClass('hidden');
@@ -97,14 +143,28 @@ block content
         })
 
       script(id="reply" type="text/html").
-        <div class="form-group">
+        <div class="form-group js-reply-group" data-id="{{_id}}">
           <div class="col-sm-6 col-sm-offset-2">
-            <input class="form-control" placeholder="Reply">
+            <input class="form-control" placeholder="Reply" value="{{reply}}">
           </div>
           <div class="col-sm-4">
-            <a href="#" class="js-replySubmit btn btn-success">
-              <span class="glyphicon glyphicon-ok" aria-hidden='true'>
-            </a>
+            
+            {{#reply}}
+              <a href="#" class="js-replyEdit btn btn-success">
+                <span class="glyphicon glyphicon-pencil" aria-hidden='true'>
+              </a>
+              &nbsp;
+              <a href="#" class="js-replyDelete btn btn-danger">
+                <span class="glyphicon glyphicon-remove" aria-hidden='true'>
+              </a>
+            {{/reply}}
+
+            {{^reply}}
+              <a href="#" class="js-replyAdd btn btn-success">
+                <span class="glyphicon glyphicon-plus" aria-hidden='true'>
+              </a>
+            {{/reply}}
+
           </div>
         </div>
 

@@ -17,6 +17,8 @@ mongoose.connect(config.db, options, function(err){
   if (err) console.log("Error connecting to the MongoDB --", err);
 });
 
+app.projectName = dbName;
+
 var conn = mongoose.connection;
 
 conn.once('open', function() {

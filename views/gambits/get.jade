@@ -9,7 +9,7 @@ block content
           p.bg-success= success_messages
 
         //- code
-        //-   pre= gambit
+        //-   pre= 
 
     - if (error_messages.length != 0)
       p.bg-warning= error_messages
@@ -42,22 +42,6 @@ block content
             option(value="CH") Choice Question
 
       #replyGroup
-        //- - for (var i = 0; i <= gambit.replies.length ; i++)
-        //-   .form-group
-        //-     if i === 0
-        //-       label.col-sm-2.control-label(for='reply') Replies
-        //-     if (gambit.replies[i])                    
-        //-       .col-sm-6
-        //-         input.form-control(type='text', name="reply", placeholder='Reply', value="#{gambit.replies[i].reply}")
-        //-     else
-        //-       .col-sm-6.col-sm-offset-2
-        //-         input.form-control(type='text', name="reply", placeholder='Reply')
-        //-     .col-sm-4
-        //-       a.js-replySubmit.btn.btn-success
-        //-         span.glyphicon.glyphicon-plus(aria-hidden='true') 
-        //-       if (gambit.replies[i])
-        //-         a.js-replySubmit.btn.btn-danger
-        //-           span.glyphicon.glyphicon-remove(aria-hidden='true') 
 
       .form-group
         .col-sm-offset-2.col-sm-10

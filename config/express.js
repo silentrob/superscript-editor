@@ -54,12 +54,11 @@ module.exports = function (app) {
 
   // expose package.json to views
   app.use(function (req, res, next) {
+    res.locals.projectName = app.projectName;
     res.locals.pkg = pkg;
     res.locals.env = env;
     next();
   });
-
-  
 
   // bodyParser should be above methodOverride
   app.use(bodyParser.urlencoded({

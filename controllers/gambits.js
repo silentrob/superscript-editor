@@ -26,6 +26,14 @@ module.exports = function(models) {
         res.sendStatus(200);
       });
     },
+    // Update an existing reply
+    updateReply: function(req, res) {
+      var props = {reply: req.body.reply };
+      models.reply.findByIdAndUpdate(req.params.rid, props, function(err, me) {
+        console.log(err, me);
+        res.sendStatus(200);
+      });
+    },
 
     reply: function(req, res) {
       var properties = {
@@ -50,8 +58,17 @@ module.exports = function(models) {
     },
 
     update: function(req, res) {
-      req.flash('error', 'Not Implemented yet.')
-      res.redirect('/gambits/' + req.params.id);
+
+      var gambitParams = {
+        input: req.body.input,
+        isQuestion: (req.body.isQuestion == "on") ? true : false,
+        qType: req.body.qType
+      }
+
+      models.gambit.findByIdAndUpdate(req.params.id, gambitParams, function(err, me) {
+        req.flash('success', 'Gambit updated.')
+        res.redirect('/gambits/' + req.params.id);
+      });
     },
 
     post: function(req, res) {

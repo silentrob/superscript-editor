@@ -3,13 +3,13 @@ block content
   .container
     .row
       .page-header
-        h1 Show
+        h1 Edit Gambit
 
         - if (success_messages.length != 0)
           p.bg-success= success_messages
 
-        code
-          pre= gambit
+        //- code
+        //-   pre= gambit
 
     - if (error_messages.length != 0)
       p.bg-warning= error_messages
@@ -59,13 +59,11 @@ block content
         //-         a.js-replySubmit.btn.btn-danger
         //-           span.glyphicon.glyphicon-remove(aria-hidden='true') 
 
-
       .form-group
         .col-sm-offset-2.col-sm-10
           button.btn.btn-default(type='submit') Update Gambit
 
       script.
-
         $.get("/gambits/#{gambit._id}/replies", function(replies){
           for (var i = 0; i < replies.length; i++) {
             var reply = ich.reply(replies[i]);
@@ -74,14 +72,40 @@ block content
 
           var reply = ich.reply({});
           $('#replyGroup').append(reply);
-
         });
 
 
-        $("body").on({
+        // Edit Reply
+        $("#replyGroup").on({
           click:function(e){
             e.preventDefault();
-            var replyString = $(this).parents('.js-reply-group').find('input').val();
+            var $group = $(this).parents('.js-reply-group');
+            var replyId = $group.data('id');
+            var replyString = $group.find('input').val();
+
+            if (replyString === "") {
+              swal("Ooops...", "Reply can not be empty", "error"); 
+            } else {
+              $.ajax({ 
+                url: '/gambits/#{gambit._id}/reply/' + replyId, 
+                type: 'PUT',
+                data: {
+                  reply: replyString
+                },
+                success: function(result) {
+                  swal("Sweet", "Reply has been updated", "success"); 
+                }
+              });
+            }
+          }
+        }, ".js-replyEdit");
+
+        // Add Reply
+        $("#replyGroup").on({
+          click:function(e){
+            e.preventDefault();
+            $group = $(this).parents('.js-reply-group');
+            var replyString = $group.find('input').val();
 
             if (replyString === "") {
               swal("Ooops...", "Reply can not be empty", "error"); 
@@ -93,8 +117,10 @@ block content
                   reply: replyString
                 },
                 success: function(result) {
-                  var reply = ich.reply();
-                  $('#replyGroup').append(reply);
+                  var reply = ich.reply(result);
+                  $group.before(reply);
+                  $group.find('input').val("");
+                  //- $('#replyGroup').append(reply);
                 }
               });
             }
@@ -102,8 +128,8 @@ block content
           }
         }, ".js-replyAdd");
         
-
-        $("body").on({
+        // Remove Reply
+        $("#replyGroup").on({
           click:function(e){
             e.preventDefault();
             var $group = $(this).parents('.js-reply-group');
@@ -128,7 +154,6 @@ block content
                 }
               });
             });
-
           }
         }, ".js-replyDelete");
 
@@ -144,11 +169,13 @@ block content
 
       script(id="reply" type="text/html").
         <div class="form-group js-reply-group" data-id="{{_id}}">
-          <div class="col-sm-6 col-sm-offset-2">
+
+          <label class="col-sm-2 control-label">Reply</label>
+
+          <div class="col-sm-6 col-sm-offset-2.col-sm-offset-2">
             <input class="form-control" placeholder="Reply" value="{{reply}}">
           </div>
           <div class="col-sm-4">
-            
             {{#reply}}
               <a href="#" class="js-replyEdit btn btn-success">
                 <span class="glyphicon glyphicon-pencil" aria-hidden='true'>

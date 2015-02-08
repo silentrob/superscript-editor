@@ -13,7 +13,10 @@ var config = { db: 'mongodb://localhost/' + dbName }
 var options = { server: { socketOptions: { keepAlive: 1 } } };
 var factSystem = sfact.create(dbName);
 
-mongoose.connect(config.db, options);
+mongoose.connect(config.db, options, function(err){
+  if (err) console.log("Error connecting to the MongoDB --", err);
+});
+
 var conn = mongoose.connection;
 
 conn.once('open', function() {
@@ -40,6 +43,7 @@ conn.once('open', function() {
   app.get('/gambits/:id', gambitRoute.show)
   app.delete('/gambits/:id', gambitRoute.delete); 
   app.delete('/gambits/:id/reply', gambitRoute.deleteReply);
+  app.put('/gambits/:id/reply/:rid', gambitRoute.updateReply); 
 
   app.get('/topics', topicsRoute.index);
   app.post('/topics', topicsRoute.post); 

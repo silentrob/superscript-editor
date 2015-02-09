@@ -35,6 +35,8 @@ conn.once('open', function() {
 
   app.get('/', dashRoutes.index);
   app.get('/docs', dashRoutes.docs);
+  app.get('/import', dashRoutes.load);
+  app.post('/import', dashRoutes.postdata);
 
   app.get('/gambits', gambitRoute.index);
   app.post('/gambits', gambitRoute.post);

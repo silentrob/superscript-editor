@@ -1,4 +1,4 @@
-extends ../layout.jade
+extends ../_layout.jade
 block content
   .container
     .row
@@ -57,12 +57,12 @@ block content
             option(value="TG") Tag Question
             option(value="CH") Choice Question
 
-      .form-group
-        label.col-sm-2.control-label(for='topics') Topic(s)
-        .col-xs-3
-          select#topics.form-control(multiple='true', name="topics")
-            - for (var i = 0; i < topics.length; i++)
-              option(value="#{topics[i]._id}")= topics[i].name
+      //- .form-group
+      //-   label.col-sm-2.control-label(for='topics') Topic(s)
+      //-   .col-xs-3
+      //-     select#topics.form-control(multiple='true', name="topics")
+      //-       - for (var i = 0; i < topics.length; i++)
+      //-         option(value="#{topics[i]._id}")= topics[i].name
 
       .form-group
         .col-sm-offset-2.col-sm-10

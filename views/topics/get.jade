@@ -1,4 +1,4 @@
-extends ../layout.jade
+extends ../_layout.jade
 block content
   .container
     .row
@@ -8,10 +8,17 @@ block content
         - if (success_messages.length != 0)
           p.bg-success= success_messages
 
-        code
-          pre= topic
+        //- code
+        //-   pre= topic
 
-      
+        ul
+          - for (var i = 0; i < topic.gambits.length; i++)
+            li
+              a(href="/gambits/#{topic.gambits[i]._id}")= topic.gambits[i].input
+              ul
+                - for (var j = 0; j < topic.gambits[i].replies.length; j++)
+                  li= topic.gambits[i].replies[j].reply
+
       - if (error_messages.length != 0)
         p.bg-warning= error_messages
 
@@ -27,8 +34,3 @@ block content
         .form-group
           .col-sm-offset-2.col-sm-10
             button.btn.btn-default(type='submit') Add Gambit(s) to Topic
-
-
-
-
-    

@@ -1,4 +1,4 @@
-extends ../layout.jade
+extends ../_layout.jade
 block content
   .container
     .row
@@ -9,7 +9,7 @@ block content
           p.bg-success= success_messages
 
         //- code
-        //-   pre= 
+        //-   pre= gambit
 
     - if (error_messages.length != 0)
       p.bg-warning= error_messages
@@ -36,10 +36,27 @@ block content
         .col-xs-3
           select#qtype.form-control(name="qType")
             option(value="") None
-            option(value="WH") Question word
-            option(value="YN") Yes/No
-            option(value="TG") Tag Question
-            option(value="CH") Choice Question
+            if gambit.qType == "WH"
+              option(value="WH" selected="") Question word
+            else 
+              option(value="WH") Question word
+            
+            if gambit.qType == "YN"
+              option(value="YN" selected="") Yes/No
+            else
+              option(value="YN" ) Yes/No
+
+            if gambit.qType == "TG"
+              option(value="TG" selected="") Tag Question
+            else
+              option(value="TG") Tag Question
+
+            if gambit.qType == "CH"
+              option(value="CH" selected="") Choice Question
+            else
+              option(value="CH") Choice Question
+            
+            
 
       #replyGroup
 
@@ -149,7 +166,8 @@ block content
 
         $("#js-isQuestion").click(function(e){
           $('.js-questionType').toggleClass('hidden');
-        })
+        });
+        
 
       script(id="reply" type="text/html").
         <div class="form-group js-reply-group" data-id="{{_id}}">
@@ -157,7 +175,7 @@ block content
           <label class="col-sm-2 control-label">Reply</label>
 
           <div class="col-sm-6 col-sm-offset-2.col-sm-offset-2">
-            <input class="form-control" placeholder="Reply" value="{{reply}}">
+            <input class="form-control typeahead" placeholder="Reply" value="{{reply}}">
           </div>
           <div class="col-sm-4">
             {{#reply}}

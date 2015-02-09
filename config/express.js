@@ -66,7 +66,12 @@ module.exports = function (app) {
   }));
 
   app.use(bodyParser.json());
-  app.use(multer());
+  app.use(multer({
+  dest: './uploads/',
+  rename: function (fieldname, filename) {
+    return filename.replace(/\W+/g, '-').toLowerCase() + Date.now()
+  }
+}))
   
   app.use(methodOverride(function (req, res) {
     if (req.body && typeof req.body === 'object' && '_method' in req.body) {
@@ -91,7 +96,7 @@ module.exports = function (app) {
     res.locals.success_messages = req.flash('success');
     res.locals.error_messages = req.flash('error');
     next();
-  });
+  });  
 
   // should be declared after session and flash
   app.use(helpers(pkg.name));

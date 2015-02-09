@@ -1,6 +1,6 @@
 html(lang="en")
   head
-    include ./includes/head.jade
+    include ./includes/_head.jade
   body
     nav(class="navbar navbar-default")
       div(class="container-fluid")
@@ -15,8 +15,9 @@ html(lang="en")
         
           ul(class="nav navbar-nav navbar-right")
             li
+              a(href="/import") Import
+
+            li
               a(href="/docs") Docs            
-
-
 
     block content

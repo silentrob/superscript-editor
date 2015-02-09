@@ -1,4 +1,6 @@
 var _ = require("underscore");
+var async = require("async");
+
 module.exports = function(models) {
   return {
     index : function(req, res) {
@@ -31,7 +33,6 @@ module.exports = function(models) {
     },
 
     atf: function(req, res) {
-      // console.log(req.body);
       if (req.body.topics) {
         var topics = req.body.topics
         return models.topic.findById(req.params.id, function(error, topic) {
@@ -72,11 +73,22 @@ module.exports = function(models) {
     },
 
     show: function(req, res) {
-      return models.topic.findById(req.params.id, function(error, topic) {
-        // We bring in all the gambits so we can add them to the topic.
-        models.gambit.find({},'_id, input', function(error, gambits) {
-          res.render('topics/get', {topic: topic, gambits:gambits });
+      return models.topic.findById(req.params.id).populate('gambits').exec(function(error, topic) {
+        
+        // expand the replies too.
+        
+        var iter = function (gambit, cb) {
+          Reply.populate(gambit, { path: 'replies' }, cb);
+        };
+
+        async.each(topic.gambits, iter, function done(err) {
+          // We bring in all the gambits so we can add them to the topic.
+          
+          models.gambit.find({},'_id, input', function(error, gambits) {
+            res.render('topics/get', {topic: topic, gambits:gambits });
+          });
         });
+
       });
     }
   }

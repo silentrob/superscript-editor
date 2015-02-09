@@ -3,3 +3,6 @@ node_modules/*
 testbot/*
 test/*
 *.log
+logs/*
+systemDB/*
+uploads/*

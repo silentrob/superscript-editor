@@ -1,0 +1,79 @@
+.container
+  .row
+    .col-md-6
+      .panel.panel-primary
+        .panel-heading
+          span.glyphicon.glyphicon-comment
+          |  Chat
+            
+        .panel-body
+          ul.chat
+            
+        .panel-footer
+          .input-group
+            input#btn-input.form-control.input-sm(type='text', placeholder='Type your message here...')
+            span.input-group-btn
+              button#btn-chat.btn.btn-primary.btn-sm
+                | Send
+
+
+script.
+  var socket = io();
+  var oldscrollHeight = $(".panel-body")[0].scrollHeight;
+  // Send message
+  $('#btn-input').bind('keyup', function(e) {
+    var code = e.keyCode || e.which;
+    if(code == 13) {
+      $('#btn-chat').trigger('click');
+    }
+  });
+
+  $('#btn-chat').click(function(){
+    var message = $('#btn-input').val();
+    socket.emit('chat message', message);
+    $('#btn-input').val("");
+    var userChat = ich.userChat({message:message});
+    $('.chat').append(userChat);
+    return false;
+  });
+  // Recieve Message
+  socket.on('chat message', function(msgObj){
+
+    var botChat = ich.botChat({message:msgObj.text});
+    $('.chat').append(botChat);
+
+    var newscrollHeight = $(".panel-body")[0].scrollHeight;
+    if(newscrollHeight > oldscrollHeight){ 
+      $(".panel-body").scrollTop($(".panel-body")[0].scrollHeight);
+    }
+  });
+
+
+
+script(id="botChat" type="text/html").
+  <li class="left clearfix">
+    <span class="chat-img pull-left">
+      <img src="http://placehold.it/50/55C1E7/fff&text=BOT" alt="User Avatar" class="img-circle" />
+    </span>
+    <div class="chat-body clearfix">
+      <div class="header">
+        <strong class="primary-font">#{locals.projectName}</strong> <small class="pull-right text-muted">
+          <span class="glyphicon glyphicon-time"></span>12 mins ago</small>
+      </div>
+      <p>{{message}}</p>
+    </div>
+  </li>
+
+script(id="userChat" type="text/html").
+  <li class="right clearfix">
+    <span class="chat-img pull-right">
+      <img src="http://placehold.it/50/FA6F57/fff&text=ME" alt="User Avatar" class="img-circle" />
+    </span>
+    <div class="chat-body clearfix">
+      <div class="header">
+        <small class=" text-muted"><span class="glyphicon glyphicon-time"></span>13 mins ago</small>
+        <strong class="pull-right primary-font">Local User</strong>
+      </div>
+      <p>{{message}}</p>
+    </div>
+  </li>

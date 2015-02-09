@@ -71,6 +71,15 @@ module.exports = function(models) {
       });
     },
 
+    // Test a gambit against input
+    test: function(req, res) {
+      return models.gambit.findById(req.params.id, function (err, gambit) {
+        gambit.doesMatch({clean:req.body.phrase}, function(err, result){
+          res.json({isValid:result});
+        });        
+      });
+    },
+
     post: function(req, res) {
 
       if (req.body.input == "") {

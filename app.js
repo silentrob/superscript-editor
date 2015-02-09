@@ -2,9 +2,14 @@
 
 var mongoose = require('mongoose');
 var sfact = require("sfacts");
+var ss = require("superscript");
 
 var express = require('express');
 var app = express();
+
+var appServer = require('http').Server(app);
+var io = require('socket.io')(appServer);
+
  
 var port = process.env.PORT || 3000;
 var dbName = process.env.BOT || "testbot";
@@ -12,14 +17,18 @@ var dbName = process.env.BOT || "testbot";
 var config = { db: 'mongodb://localhost/' + dbName }
 var options = { server: { socketOptions: { keepAlive: 1 } } };
 var factSystem = sfact.create(dbName);
+var users = [];
 
 mongoose.connect(config.db, options, function(err){
   if (err) console.log("Error connecting to the MongoDB --", err);
 });
 
-app.projectName = dbName;
+var botOptions = {}
+var botData = [];
 
+app.projectName = dbName;
 var conn = mongoose.connection;
+
 
 conn.once('open', function() {
 
@@ -27,8 +36,6 @@ conn.once('open', function() {
 
   require('./config/express')(app);
    
-  // set up the RESTful API, handler methods are defined in api.js
-
   var dashRoutes = require('./controllers/dashboard')(models);
   var gambitRoute = require('./controllers/gambits')(models);
   var topicsRoute = require('./controllers/topics')(models);
@@ -48,6 +55,7 @@ conn.once('open', function() {
   app.delete('/gambits/:id', gambitRoute.delete); 
   app.delete('/gambits/:id/reply', gambitRoute.deleteReply);
   app.put('/gambits/:id/reply/:rid', gambitRoute.updateReply); 
+  app.post('/gambits/:id/test', gambitRoute.test)
 
   app.get('/topics', topicsRoute.index);
   app.post('/topics', topicsRoute.post); 
@@ -56,7 +64,15 @@ conn.once('open', function() {
   
   app.delete('/topics/:id', topicsRoute.delete); 
 
-  var server = app.listen(port, function () {
+
+  
+  new ss('', botOptions, function(err, botInstance){
+    require('./config/chat')(io, botInstance);
+  });
+
+
+
+  var server = appServer.listen(port, function () {
     var host = server.address().address
     var port = server.address().port
     console.log('\n\n\tSuperScript Community Editor.\n\tListening at http://%s:%s\n\tBot Name: %s\n\n\tSwitch or create a new bot by starting `BOT=<name> node app.js`\n\n', host, port, dbName)

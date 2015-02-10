@@ -58,6 +58,13 @@ script.
     }
   }, ".js-edit");
 
+  $("body").on({
+    click:function(e){
+      e.preventDefault();
+      $("#formName").val($(e.target).parents("li").prev().find('.js-edit').text())
+    }
+  }, ".js-edit2");
+
 script(id="botChat" type="text/html").
   <li class="left clearfix">
     <span class="chat-img pull-left">
@@ -77,7 +84,14 @@ script(id="botChat" type="text/html").
       {{/gambitId}}
       
       {{^gambitId}}
-        <p>{{string}}</p>
+        {{#string}}
+          <p>{{string}}</p>
+        {{/string}}
+        
+        {{^string}}
+          <p><a class="js-edit2" href="#"><em>No reply, perhaps you could add one...</em></a></p>
+        {{/string}}
+
       {{/gambitId}}
     </div>
   </li>

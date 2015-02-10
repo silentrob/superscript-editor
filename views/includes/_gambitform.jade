@@ -1,0 +1,52 @@
+form.form-horizontal.js-submit(action="/gambits", method="post")
+  .form-group
+    label.col-sm-2.control-label(for='formName') Input
+    .col-sm-10
+      input#formName.form-control.input-lg(type='text', name="input", placeholder='Input')
+  .form-group
+    label.col-sm-2.control-label(for='reply') Quick Reply
+    .col-sm-10
+      input#reply.form-control(type='text', name="reply", placeholder='Quick Reply')
+  .form-group
+    .col-sm-offset-2.col-sm-10
+      .checkbox
+        label
+          input#js-isQuestion(type='checkbox', name="isQuestion") 
+          | Is Question
+
+  .form-group.js-questionType(class="hidden")
+    label.col-sm-2.control-label(for='reply') Question Type
+    .col-xs-3
+      select#qtype.form-control(name="qType")
+        option(value="") None
+        option(value="WH") Question word
+        option(value="YN") Yes/No
+        option(value="TG") Tag Question
+        option(value="CH") Choice Question
+
+  .form-group
+    .col-sm-offset-2.col-sm-10
+      button.btn.btn-default(type='submit') Create Gambit
+
+  script.
+
+    $('.js-submit').submit(function(e){
+      e.preventDefault();
+      $.ajax({ 
+        url: '/gambits/quick', 
+        type: 'POST',
+        data: $( this ).serialize(),
+        success: function(result) {
+          if (result.success) {
+            swal("Sweet", "Gambit Added", "success");   
+          } else {
+            swal("Sweet", result.error, "error");   
+          }
+          
+        }
+      });
+    });
+
+    $("#js-isQuestion").click(function(e){
+      $('.js-questionType').toggleClass('hidden');
+    })

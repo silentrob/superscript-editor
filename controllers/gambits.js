@@ -80,6 +80,38 @@ module.exports = function(models) {
       });
     },
 
+    quickPost: function(req, res) {
+
+      if (req.body.input == "" || req.body.reply == "") {
+        res.json({error:'missing Input'});
+      } else {
+        var isQuestion = (req.body.isQuestion == "on") ? true : false;
+        var gambitParams = {
+          input: req.body.input,
+          isQuestion: isQuestion,
+          qType: req.body.qType
+        }
+        var gambit = new models.gambit(gambitParams);
+        var replyParams = {
+          reply: req.body.reply
+        }
+        
+        models.reply.create(replyParams, function(err,reply){
+          gambit.replies.addToSet(reply._id);
+          gambit.save(function(err){
+
+            var remMe = {$addToSet: {gambits: gambit._id }};
+            models.topic.findOne({name:'random'},  function(err, topic) {
+              topic.update(remMe, function(err, xxx){
+                res.json({success:true});  
+              });
+              
+            });
+          });
+        });
+      }
+    },
+
     post: function(req, res) {
 
       if (req.body.input == "") {

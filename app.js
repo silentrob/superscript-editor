@@ -49,6 +49,7 @@ conn.once('open', function() {
 
   app.get('/gambits', gambitRoute.index);
   app.post('/gambits', gambitRoute.post);
+  app.post('/gambits/quick', gambitRoute.quickPost);
   
   app.post('/gambits/:id/reply', gambitRoute.reply); 
   app.get('/gambits/:id/replies', gambitRoute.replies); 
@@ -65,7 +66,7 @@ conn.once('open', function() {
   app.get('/topics/:id', topicsRoute.show)
   
   app.delete('/topics/:id', topicsRoute.delete); 
-    
+
   new ss(botOptions, function(err, botInstance){
     require('./config/chat')(io, botInstance);
   });

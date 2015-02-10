@@ -15,6 +15,8 @@
             span.input-group-btn
               button#btn-chat.btn.btn-primary.btn-sm
                 | Send
+    .col-md-6
+      include ../includes/_gambitform.jade
 
 
 script.
@@ -32,14 +34,14 @@ script.
     var message = $('#btn-input').val();
     socket.emit('chat message', message);
     $('#btn-input').val("");
-    var userChat = ich.userChat({message:message});
+    var userChat = ich.userChat({string:message});
     $('.chat').append(userChat);
     return false;
   });
+
   // Recieve Message
   socket.on('chat message', function(msgObj){
-
-    var botChat = ich.botChat({message:msgObj.text});
+    var botChat = ich.botChat(msgObj);
     $('.chat').append(botChat);
 
     var newscrollHeight = $(".panel-body")[0].scrollHeight;
@@ -48,7 +50,13 @@ script.
     }
   });
 
-
+  // providing we have a edit widget near by
+  $("body").on({
+    click:function(e){
+      e.preventDefault();
+      $("#formName").val($(e.target).text())
+    }
+  }, ".js-edit");
 
 script(id="botChat" type="text/html").
   <li class="left clearfix">
@@ -58,9 +66,19 @@ script(id="botChat" type="text/html").
     <div class="chat-body clearfix">
       <div class="header">
         <strong class="primary-font">#{locals.projectName}</strong> <small class="pull-right text-muted">
-          <span class="glyphicon glyphicon-time"></span>12 mins ago</small>
+          <span class="glyphicon glyphicon-time"></span>{{createdAt}}</small>
       </div>
-      <p>{{message}}</p>
+      {{#topicName}}
+        <p>Topic: <strong>{{topicName}}</strong></p>
+      {{/topicName}}
+      
+      {{#gambitId}}
+        <p><a href="/gambits/{{gambitId}}", target="_blank">{{string}}</a></p>
+      {{/gambitId}}
+      
+      {{^gambitId}}
+        <p>{{string}}</p>
+      {{/gambitId}}
     </div>
   </li>
 
@@ -71,9 +89,9 @@ script(id="userChat" type="text/html").
     </span>
     <div class="chat-body clearfix">
       <div class="header">
-        <small class=" text-muted"><span class="glyphicon glyphicon-time"></span>13 mins ago</small>
-        <strong class="pull-right primary-font">Local User</strong>
+        <small class=" text-muted"><span class="glyphicon glyphicon-time"></span>moments ago</small>
+        <strong class="pull-right primary-font">Bot Author</strong>
       </div>
-      <p>{{message}}</p>
+      <p><a class="js-edit" href="#">{{string}}</a></p>
     </div>
   </li>

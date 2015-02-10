@@ -31,48 +31,10 @@ block content
     - if (error_messages.length != 0)
       p.bg-warning= error_messages
 
-    form.form-horizontal(action="/gambits", method="post")
-      .form-group
-        label.col-sm-2.control-label(for='formName') Input
-        .col-sm-10
-          input#formName.form-control.input-lg(type='text', name="input", placeholder='Input')
-      .form-group
-        label.col-sm-2.control-label(for='reply') Quick Reply
-        .col-sm-10
-          input#reply.form-control(type='text', name="reply", placeholder='Quick Reply')
-      .form-group
-        .col-sm-offset-2.col-sm-10
-          .checkbox
-            label
-              input#js-isQuestion(type='checkbox', name="isQuestion") 
-              | Is Question
-
-      .form-group.js-questionType(class="hidden")
-        label.col-sm-2.control-label(for='reply') Question Type
-        .col-xs-3
-          select#qtype.form-control(name="qType")
-            option(value="") None
-            option(value="WH") Question word
-            option(value="YN") Yes/No
-            option(value="TG") Tag Question
-            option(value="CH") Choice Question
-
-      //- .form-group
-      //-   label.col-sm-2.control-label(for='topics') Topic(s)
-      //-   .col-xs-3
-      //-     select#topics.form-control(multiple='true', name="topics")
-      //-       - for (var i = 0; i < topics.length; i++)
-      //-         option(value="#{topics[i]._id}")= topics[i].name
-
-      .form-group
-        .col-sm-offset-2.col-sm-10
-          button.btn.btn-default(type='submit') Create Gambit
+  include ../includes/_gambitform.jade
+    
 
   script.
-
-    $("#js-isQuestion").click(function(e){
-      $('.js-questionType').toggleClass('hidden');
-    })
 
     $(".js-del").click(function(e){
       var id = $(e.target).data('id');

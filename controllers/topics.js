@@ -4,7 +4,7 @@ var async = require("async");
 module.exports = function(models) {
   return {
     index : function(req, res) {
-      models.topic.find({}, function(err, topics){
+      models.topic.find({}, null, {sort:{name:1}}, function(err, topics){
         res.render('topics/index', {topics: topics });
       });  
     },

@@ -14,6 +14,7 @@ block content
           tr
             th Name
             th Keywords
+            th System
             th(style="width:25px") GC
             th Action
 
@@ -22,6 +23,7 @@ block content
             td
               a(href="/topics/#{topics[i].id}")= topics[i].name
             td= topics[i].keywords
+            td= (topics[i].system) ? "Y": "N"
             td= topics[i].gambits.length
             td
               a(data-id="#{topics[i].id}").js-del.btn.btn-danger.btn-xs Delete

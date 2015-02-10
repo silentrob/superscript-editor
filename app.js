@@ -10,7 +10,6 @@ var app = express();
 var appServer = require('http').Server(app);
 var io = require('socket.io')(appServer);
 
- 
 var port = process.env.PORT || 3000;
 var dbName = process.env.BOT || "testbot";
 
@@ -23,7 +22,10 @@ mongoose.connect(config.db, options, function(err){
   if (err) console.log("Error connecting to the MongoDB --", err);
 });
 
-var botOptions = {}
+var botOptions = {
+  mongoose : mongoose,
+  factSystem: factSystem
+}
 var botData = [];
 
 app.projectName = dbName;
@@ -63,14 +65,10 @@ conn.once('open', function() {
   app.get('/topics/:id', topicsRoute.show)
   
   app.delete('/topics/:id', topicsRoute.delete); 
-
-
-  
-  new ss('', botOptions, function(err, botInstance){
+    
+  new ss(botOptions, function(err, botInstance){
     require('./config/chat')(io, botInstance);
   });
-
-
 
   var server = appServer.listen(port, function () {
     var host = server.address().address

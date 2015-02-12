@@ -28,7 +28,10 @@ module.exports = function(models) {
     },
     // Update an existing reply
     updateReply: function(req, res) {
-      var props = {reply: req.body.reply };
+      var props = {
+        reply: req.body.reply,
+        filter: req.body.filter
+      };
       models.reply.findByIdAndUpdate(req.params.rid, props, function(err, me) {
         console.log(err, me);
         res.sendStatus(200);
@@ -37,7 +40,8 @@ module.exports = function(models) {
 
     reply: function(req, res) {
       var properties = {
-        reply: req.body.reply
+        reply: req.body.reply,
+        filter: req.body.filter
       };
 
       models.reply.create(properties, function(err,rep){
@@ -168,8 +172,13 @@ module.exports = function(models) {
 
     show: function(req, res) {
       return models.gambit.findById(req.params.id).exec(function(error, gambit) {
-        res.render('gambits/get', {gambit: gambit });
-      })
+        // what links to this gambit
+        return models.topic.find({ gambits: gambit._id }).exec(function(error, topics) {
+          
+          res.render('gambits/get', {gambit: gambit, topics: topics});
+
+        });
+      });
     }
   }
 }

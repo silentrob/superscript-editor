@@ -41,6 +41,7 @@ script.
 
   // Recieve Message
   socket.on('chat message', function(msgObj){
+    console.log(msgObj)
     var botChat = ich.botChat(msgObj);
     $('.chat').append(botChat);
 
@@ -76,7 +77,7 @@ script(id="botChat" type="text/html").
           <span class="glyphicon glyphicon-time"></span>{{createdAt}}</small>
       </div>
       {{#topicName}}
-        <p>Topic: <strong>{{topicName}}</strong></p>
+        <p>Topic: <strong><a href="/topics/{{topicId}}">{{topicName}}</a></strong></p>
       {{/topicName}}
       
       {{#gambitId}}
@@ -89,7 +90,7 @@ script(id="botChat" type="text/html").
         {{/string}}
         
         {{^string}}
-          <p><a class="js-edit2" href="#"><em>No reply, perhaps you could add one...</em></a></p>
+          <p>Create <a class="js-edit2" href="#"><em>Topic Reply</em></a> or <a class="js-edit2" href="#"><em>Direct Reply</em></a></p>
         {{/string}}
 
       {{/gambitId}}

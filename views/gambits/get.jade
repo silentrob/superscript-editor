@@ -3,13 +3,14 @@ block content
   .container
     .row
       .page-header
-        h1 Edit Gambit
+        h1 Gambit
 
         - if (success_messages.length != 0)
           p.bg-success= success_messages
 
         //- code
         //-   pre= gambit
+        //-   pre= topics
 
     - if (error_messages.length != 0)
       p.bg-warning= error_messages
@@ -67,7 +68,15 @@ block content
 
     .row
       .page-header
-        h2 Test Gambit
+        h3 Located in
+        ul
+        - for (var i = 0; i < topics.length; i++) 
+          li
+            a(href="/topics/#{topics[i]._id}")= topics[i].name
+
+    .row
+      .page-header
+        h3 Test Gambit
 
     form.form-horizontal.js-submitTest
       .form-group
@@ -99,12 +108,11 @@ block content
               phrase: string
             },
             success: function(result) {
-            if (result.isValid) {
-              swal("Tested", "Yay", "success"); 
-            } else {
-              swal("Tested", "'" + string + "' does not match", "error"); 
-            }
-              
+              if (result.isValid) {
+                swal("Tested", "Yay", "success"); 
+              } else {
+                swal("Tested", "'" + string + "' does not match", "error"); 
+              }              
             }
           });
         });
@@ -112,6 +120,7 @@ block content
         $.get("/gambits/#{gambit._id}/replies", function(replies){
           for (var i = 0; i < replies.length; i++) {
             var reply = ich.reply(replies[i]);
+            console.log("reply", reply)
             $('#replyGroup').append(reply);
           }
 
@@ -126,7 +135,8 @@ block content
             e.preventDefault();
             var $group = $(this).parents('.js-reply-group');
             var replyId = $group.data('id');
-            var replyString = $group.find('input').val();
+            var replyString = $group.find('.reply').val();
+            var filterFunction = $group.find('.filter').val();
 
             if (replyString === "") {
               swal("Ooops...", "Reply can not be empty", "error"); 
@@ -135,7 +145,8 @@ block content
                 url: '/gambits/#{gambit._id}/reply/' + replyId, 
                 type: 'PUT',
                 data: {
-                  reply: replyString
+                  reply: replyString,
+                  filter: filterFunction
                 },
                 success: function(result) {
                   swal("Sweet", "Reply has been updated", "success"); 
@@ -150,7 +161,8 @@ block content
           click:function(e){
             e.preventDefault();
             $group = $(this).parents('.js-reply-group');
-            var replyString = $group.find('input').val();
+            var replyString = $group.find('.reply').val();
+            var filterFunction = $group.find('.filter').val();
 
             if (replyString === "") {
               swal("Ooops...", "Reply can not be empty", "error"); 
@@ -159,13 +171,14 @@ block content
                 url: '/gambits/#{gambit._id}/reply', 
                 type: 'POST',
                 data: {
-                  reply: replyString
+                  reply: replyString,
+                  filter: filterFunction
                 },
                 success: function(result) {
+                  console.log(result)
                   var reply = ich.reply(result);
                   $group.before(reply);
                   $group.find('input').val("");
-                  //- $('#replyGroup').append(reply);
                 }
               });
             }
@@ -202,7 +215,18 @@ block content
           }
         }, ".js-replyDelete");
 
-        
+        // Remove Reply
+        $("#replyGroup").on({
+          click:function(e){
+            e.preventDefault();
+            swal({
+              title: "Yikes",   
+              text: "I haven't build this yet. \n This button will allow you to create a gambit from this reply.",   
+              type: "warning"
+            }, function(){
+            });
+          }
+        }, ".js-replyExpand");
 
         if (!$('input#js-isQuestion').is(':checked')) {
           $('.js-questionType').addClass('hidden');
@@ -218,18 +242,27 @@ block content
 
           <label class="col-sm-2 control-label">Reply</label>
 
-          <div class="col-sm-6 col-sm-offset-2.col-sm-offset-2">
-            <input class="form-control typeahead" placeholder="Reply" value="{{reply}}">
+          <div class="col-sm-2">
+            <input class="filter form-control" placeholder="Filter Function" value="{{filter}}">
           </div>
-          <div class="col-sm-4">
+
+          <div class="col-sm-6">
+            <input class="reply form-control" placeholder="Reply" value="{{reply}}">
+          </div>
+          <div class="col-sm-2">
             {{#reply}}
               <a href="#" class="js-replyEdit btn btn-success">
                 <span class="glyphicon glyphicon-pencil" aria-hidden='true'>
               </a>
+              <a href="#" class="js-replyExpand btn btn-primary">
+                <span class=" glyphicon glyphicon-chevron-right" aria-hidden='true'>
+              </a>
+
               &nbsp;
               <a href="#" class="js-replyDelete btn btn-danger">
                 <span class="glyphicon glyphicon-remove" aria-hidden='true'>
               </a>
+
             {{/reply}}
 
             {{^reply}}

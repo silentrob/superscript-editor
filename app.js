@@ -68,7 +68,7 @@ conn.once('open', function() {
   app.delete('/topics/:id', topicsRoute.delete); 
 
   new ss(botOptions, function(err, botInstance){
-    require('./config/chat')(io, botInstance);
+    require('./config/chat')(io, botInstance, models);
   });
 
   var server = appServer.listen(port, function () {

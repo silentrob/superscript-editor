@@ -66,8 +66,16 @@ script.
     }
   }, ".js-edit2");
 
+  $("body").on({
+    click:function(e){
+      e.preventDefault();
+      $(e.target).parents("li").prev().find('.js-edit').text()
+      $("#formName").val();
+    }
+  }, ".js-editDirect");
+  
 script(id="botChat" type="text/html").
-  <li class="left clearfix">
+  <li class="left js-bot clearfix" data-gambit-id="{{gambitId}}" data-reply-id="{{replyId}}">
     <span class="chat-img pull-left">
       <img src="http://placehold.it/50/55C1E7/fff&text=BOT" alt="User Avatar" class="img-circle" />
     </span>
@@ -90,7 +98,7 @@ script(id="botChat" type="text/html").
         {{/string}}
         
         {{^string}}
-          <p>Create <a class="js-edit2" href="#"><em>Topic Reply</em></a> or <a class="" href="#"><em>Direct Reply</em></a></p>
+          <p>Create <a class="js-edit2" href="#"><em>Topic Reply</em></a> or <a class="js-editDirect" href="#"><em>Direct Reply</em></a></p>
         {{/string}}
 
       {{/gambitId}}
@@ -98,7 +106,7 @@ script(id="botChat" type="text/html").
   </li>
 
 script(id="userChat" type="text/html").
-  <li class="right clearfix">
+  <li class="right js-human clearfix">
     <span class="chat-img pull-right">
       <img src="http://placehold.it/50/FA6F57/fff&text=ME" alt="User Avatar" class="img-circle" />
     </span>

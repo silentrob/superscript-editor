@@ -3,7 +3,10 @@ block content
   .container
     .row
       .page-header
-        h1 Gambit
+        if (parent)
+          h2 Gambit in reply to '<a href="/gambits/#{parent._id}">#{parent.input}</a>' >> '<a href="/gambits/#{parent._id}">#{parent.replies[0].reply}</a>'
+        else
+          h2 Gambit
 
         - if (success_messages.length != 0)
           p.bg-success= success_messages
@@ -11,16 +14,22 @@ block content
         //- code
         //-   pre= gambit
         //-   pre= topics
+        //-   pre= parent
+        //-   pre= reply
 
     - if (error_messages.length != 0)
       p.bg-warning= error_messages
 
     form.form-horizontal(action="/gambits/#{gambit._id}", method="post")
-      input(type="hidden", name="_method", value="put")
+      if (isNew === true && parent)
+        input(type="hidden", name="replyId", value="#{parent.replies[0]._id}")
+      else 
+        input(type="hidden", name="_method", value="put")
+
       .form-group
         label.col-sm-2.control-label(for='formName') Input
         .col-sm-10
-          input#formName.form-control.input-lg(type='text', name="input", placeholder='Input', value='#{gambit.input}')
+          input#formName.form-control.input-lg(type='text', name="input", placeholder='Input', value='#{gambit.input||""}')
       .form-group
         .col-sm-offset-2.col-sm-10
           .checkbox
@@ -57,231 +66,250 @@ block content
             else
               option(value="CH") Choice Question
             
-            
-
       #replyGroup
 
       .form-group
         .col-sm-offset-2.col-sm-10
-          button.btn.btn-default(type='submit') Update Gambit
+          if isNew
+            button.btn.btn-default(type='submit') Create Gambit
+          else 
+            button.btn.btn-default(type='submit') Update Gambit
 
+    if (topics.length != 0 || reply && parent)
+      .row
+        .page-header
+          h3 This Gambit apprars in
+          ul
+          if reply && parent
+            li Reply: 
+              a(href="/gambits/#{parent._id}")=reply.reply
+          - for (var i = 0; i < topics.length; i++) 
+            li Topic: 
+              a(href="/topics/#{topics[i]._id}")=topics[i].name
 
-    .row
-      .page-header
-        h3 Located in
-        ul
-        - for (var i = 0; i < topics.length; i++) 
-          li
-            a(href="/topics/#{topics[i]._id}")= topics[i].name
+    if (!isNew)
+      .row
+        .page-header
+          h3 Test Gambit
 
-    .row
-      .page-header
-        h3 Test Gambit
+      form.form-horizontal.js-submitTest
+        .form-group
+          label.col-sm-2.control-label(for='testPhrase') Test phrase
+          .col-sm-10
+            input#testPhrase.form-control.input-lg(type='text', name="phrase", placeholder='Test Phrase')
 
-    form.form-horizontal.js-submitTest
-      .form-group
-        label.col-sm-2.control-label(for='testPhrase') Test phrase
-        .col-sm-10
-          input#testPhrase.form-control.input-lg(type='text', name="phrase", placeholder='Test Phrase')
+        .form-group
+          .col-sm-offset-2.col-sm-10
+            a.js-testPhrase.btn.btn-default Test Gambit
 
-      .form-group
-        .col-sm-offset-2.col-sm-10
-          a.js-testPhrase.btn.btn-default Test Gambit
+    script.
 
+      $('.js-submitTest').submit(function(e){
+        e.preventDefault();
+        $('.js-testPhrase').trigger('click');
+      });
 
-      script.
+      // Check to see if we can match
+      $('.js-testPhrase').click(function(e){
+        e.preventDefault;
+        var string = $("#testPhrase").val();
 
-        $('.js-submitTest').submit(function(e){
-          e.preventDefault();
-          $('.js-testPhrase').trigger('click');
-        });
+        $.ajax({ 
+          url: '/gambits/#{gambit._id}/test', 
+          type: 'POST',
+          data: {
+            phrase: string
+          },
+          success: function(result) {
+            var stars = [];
 
-        // Check to see if we can match
-        $('.js-testPhrase').click(function(e){
-          e.preventDefault;
-          var string = $("#testPhrase").val();
-
-          $.ajax({ 
-            url: '/gambits/#{gambit._id}/test', 
-            type: 'POST',
-            data: {
-              phrase: string
-            },
-            success: function(result) {
-              var stars = [];
-
-              if (result) {
-                for (var i = 1; i <= result.length;i++){
-                  stars.push(result[i]);
-                }
-                if (stars.length != 0) {
-                  swal("Tested", "Yay found matches\n" + stars, "success");   
-                } else {
-                  swal("Tested", "Yay it matches","success"); 
-                }
-                
+            if (result) {
+              for (var i = 1; i <= result.length;i++){
+                stars.push(result[i]);
+              }
+              if (stars.length != 0) {
+                swal("Tested", "Yay found matches\n" + stars, "success");   
               } else {
-                swal("Tested", "'" + string + "' does not match", "error"); 
-              }              
-            }
-          });
-        });
-
-        $.get("/gambits/#{gambit._id}/replies", function(replies){
-          for (var i = 0; i < replies.length; i++) {
-            var reply = ich.reply(replies[i]);
-            console.log("reply", reply)
-            $('#replyGroup').append(reply);
+                swal("Tested", "Yay it matches","success"); 
+              }
+            } else {
+              swal("Tested", "'" + string + "' does not match", "error"); 
+            }              
           }
+        });
+      });
 
-          var reply = ich.reply({});
+      var loadPlugins = function() {
+        var plugins = new Bloodhound({
+          datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+          queryTokenizer: Bloodhound.tokenizers.whitespace,
+          limit: 10,
+          prefetch: {
+            url: '/plugins',
+            filter: function(list) {
+              return $.map(list, function(country) { return { name: country }; });
+            }
+          }
+        });
+         
+        // kicks off the loading/processing of `local` and `prefetch`
+        plugins.initialize();
+        $('.typeahead').typeahead(null, {
+          name: 'countries',
+          displayKey: 'name',
+          source: plugins.ttAdapter()
+        });
+      }
+
+      $.get("/gambits/#{gambit._id}/replies", function(replies){
+        for (var i = 0; i < replies.length; i++) {
+          var reply = ich.reply(replies[i]);
           $('#replyGroup').append(reply);
-        });
-
-
-        // Edit Reply
-        $("#replyGroup").on({
-          click:function(e){
-            e.preventDefault();
-            var $group = $(this).parents('.js-reply-group');
-            var replyId = $group.data('id');
-            var replyString = $group.find('.reply').val();
-            var filterFunction = $group.find('.filter').val();
-
-            if (replyString === "") {
-              swal("Ooops...", "Reply can not be empty", "error"); 
-            } else {
-              $.ajax({ 
-                url: '/gambits/#{gambit._id}/reply/' + replyId, 
-                type: 'PUT',
-                data: {
-                  reply: replyString,
-                  filter: filterFunction
-                },
-                success: function(result) {
-                  swal("Sweet", "Reply has been updated", "success"); 
-                }
-              });
-            }
-          }
-        }, ".js-replyEdit");
-
-        // Add Reply
-        $("#replyGroup").on({
-          click:function(e){
-            e.preventDefault();
-            $group = $(this).parents('.js-reply-group');
-            var replyString = $group.find('.reply').val();
-            var filterFunction = $group.find('.filter').val();
-
-            if (replyString === "") {
-              swal("Ooops...", "Reply can not be empty", "error"); 
-            } else {
-              $.ajax({ 
-                url: '/gambits/#{gambit._id}/reply', 
-                type: 'POST',
-                data: {
-                  reply: replyString,
-                  filter: filterFunction
-                },
-                success: function(result) {
-                  console.log(result)
-                  var reply = ich.reply(result);
-                  $group.before(reply);
-                  $group.find('input').val("");
-                }
-              });
-            }
-
-          }
-        }, ".js-replyAdd");
-        
-        // Remove Reply
-        $("#replyGroup").on({
-          click:function(e){
-            e.preventDefault();
-            var $group = $(this).parents('.js-reply-group');
-            var replyId = $group.data('id')
-            swal({
-              title: "Are you sure?",   
-              text: "You will not be able to recover this reply!",   
-              type: "warning",   
-              showCancelButton: true,   
-              confirmButtonColor: "#DD6B55",   
-              confirmButtonText: "Yes, delete it!",   
-              closeOnConfirm: true 
-            }, function(){   
-              $.ajax({ 
-                url: '/gambits/#{gambit._id}/reply',
-                type: 'DELETE',
-                data: {
-                  replyId: replyId
-                },
-                success: function(result) {
-                  $group[0].remove();
-                }
-              });
-            });
-          }
-        }, ".js-replyDelete");
-
-        // Remove Reply
-        $("#replyGroup").on({
-          click:function(e){
-            e.preventDefault();
-            swal({
-              title: "Yikes",   
-              text: "I haven't build this yet. \n This button will allow you to create a gambit from this reply.",   
-              type: "warning"
-            }, function(){
-            });
-          }
-        }, ".js-replyExpand");
-
-        if (!$('input#js-isQuestion').is(':checked')) {
-          $('.js-questionType').addClass('hidden');
         }
 
-        $("#js-isQuestion").click(function(e){
-          $('.js-questionType').toggleClass('hidden');
-        });
-        
+        var reply = ich.reply({});
+        $('#replyGroup').append(reply);
+        loadPlugins();
+      });
 
-      script(id="reply" type="text/html").
-        <div class="form-group js-reply-group" data-id="{{_id}}">
 
-          <label class="col-sm-2 control-label">Reply</label>
+      // Edit Reply
+      $("#replyGroup").on({
+        click:function(e){
+          e.preventDefault();
+          var $group = $(this).parents('.js-reply-group');
+          var replyId = $group.data('id');
+          var replyString = $group.find('.reply').val();
+          var filterFunction = $group.find('.filter').val();
 
-          <div class="col-sm-2">
-            <input class="filter form-control" placeholder="Filter Function" value="{{filter}}">
-          </div>
+          if (replyString === "") {
+            swal("Ooops...", "Reply can not be empty", "error"); 
+          } else {
+            $.ajax({ 
+              url: '/gambits/#{gambit._id}/reply/' + replyId, 
+              type: 'PUT',
+              data: {
+                reply: replyString,
+                filter: filterFunction
+              },
+              success: function(result) {
+                swal("Sweet", "Reply has been updated", "success"); 
+              }
+            });
+          }
+        }
+      }, ".js-replyEdit");
 
-          <div class="col-sm-6">
-            <input class="reply form-control" placeholder="Reply" value="{{reply}}">
-          </div>
-          <div class="col-sm-2">
-            {{#reply}}
-              <a href="#" class="js-replyEdit btn btn-success">
-                <span class="glyphicon glyphicon-pencil" aria-hidden='true'>
-              </a>
-              <a href="#" class="js-replyExpand btn btn-primary">
-                <span class=" glyphicon glyphicon-chevron-right" aria-hidden='true'>
-              </a>
+      // Add Reply
+      $("#replyGroup").on({
+        click:function(e){
+          e.preventDefault();
+          $group = $(this).parents('.js-reply-group');
+          var replyString = $group.find('.reply').val();
+          var filterFunction = $group.find('.filter').val();
 
-              &nbsp;
-              <a href="#" class="js-replyDelete btn btn-danger">
-                <span class="glyphicon glyphicon-remove" aria-hidden='true'>
-              </a>
+          if (replyString === "") {
+            swal("Ooops...", "Reply can not be empty", "error"); 
+          } else {
+            $.ajax({ 
+              url: '/gambits/#{gambit._id}/reply', 
+              type: 'POST',
+              data: {
+                reply: replyString,
+                filter: filterFunction
+              },
+              success: function(result) {
+                console.log(result)
+                var reply = ich.reply(result);
+                $group.before(reply);
+                $group.find('input').val("");
+              }
+            });
+          }
 
-            {{/reply}}
+        }
+      }, ".js-replyAdd");
+      
+      // Remove Reply
+      $("#replyGroup").on({
+        click:function(e){
+          e.preventDefault();
+          var $group = $(this).parents('.js-reply-group');
+          var replyId = $group.data('id')
+          swal({
+            title: "Are you sure?",   
+            text: "You will not be able to recover this reply!",   
+            type: "warning",   
+            showCancelButton: true,   
+            confirmButtonColor: "#DD6B55",   
+            confirmButtonText: "Yes, delete it!",   
+            closeOnConfirm: true 
+          }, function(){   
+            $.ajax({ 
+              url: '/gambits/#{gambit._id}/reply',
+              type: 'DELETE',
+              data: {
+                replyId: replyId
+              },
+              success: function(result) {
+                $group[0].remove();
+              }
+            });
+          });
+        }
+      }, ".js-replyDelete");
 
-            {{^reply}}
-              <a href="#" class="js-replyAdd btn btn-success">
-                <span class="glyphicon glyphicon-plus" aria-hidden='true'>
-              </a>
-            {{/reply}}
+      // Remove Reply
+      $("#replyGroup").on({
+        click:function(e){
+          e.preventDefault();
 
-          </div>
+        }
+      }, ".js-replyExpand");
+
+      if (!$('input#js-isQuestion').is(':checked')) {
+        $('.js-questionType').addClass('hidden');
+      }
+
+      $("#js-isQuestion").click(function(e){
+        $('.js-questionType').toggleClass('hidden');
+      });
+      
+
+    script(id="reply" type="text/html").
+      <div class="form-group js-reply-group" data-id="{{_id}}">
+
+        <label class="col-sm-2 control-label">Reply</label>
+        <div class="col-sm-2">
+          <input class="filter typeahead form-control" placeholder="Filter Function" value="{{filter}}">
         </div>
+        
+        <div class="col-sm-5">
+          <input class="reply form-control" placeholder="Reply" value="{{reply}}">
+        </div>
+        <div class="col-sm-2">
+          {{#reply}}
+            <a href="#" class="js-replyEdit btn btn-success">
+              <span class="glyphicon glyphicon-pencil" aria-hidden='true'>
+            </a>
+            <a href="/gambits/new?replyId={{_id}}" class=" btn btn-primary">
+              <span class=" glyphicon glyphicon-chevron-right" aria-hidden='true'>
+            </a>
+
+            &nbsp;
+            <a href="#" class="js-replyDelete btn btn-danger">
+              <span class="glyphicon glyphicon-remove" aria-hidden='true'>
+            </a>
+
+          {{/reply}}
+
+          {{^reply}}
+            <a href="#" class="js-replyAdd btn btn-success">
+              <span class="glyphicon glyphicon-plus" aria-hidden='true'>
+            </a>
+          {{/reply}}
+
+        </div>
+      </div>
 
 

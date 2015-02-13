@@ -4,6 +4,7 @@
   "description": "A community editor for creating Chatter bots with SuperScript",
   "main": "app.js",
   "scripts": {
+    "start": "node app",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",

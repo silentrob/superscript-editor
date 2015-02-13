@@ -45,32 +45,41 @@ conn.once('open', function() {
     var dashRoutes = require('./controllers/dashboard')(models, botInstance);
     var gambitRoute = require('./controllers/gambits')(models, botInstance);
     var topicsRoute = require('./controllers/topics')(models, botInstance);
-
+    var pluginsRoute = require('./controllers/plugins')(models, botInstance);
+    
+    // General routs
     app.get('/', dashRoutes.index);
     app.get('/docs', dashRoutes.docs);
     app.get('/import', dashRoutes.load);
     app.post('/import', dashRoutes.postdata);
 
+    // Plugin JSON
+    app.get('/plugins', pluginsRoute.getJSON);
+
+    // Gambits CRUD and nested replies
     app.get('/gambits', gambitRoute.index);
     app.post('/gambits', gambitRoute.post);
+    app.post('/gambits/:id', gambitRoute.post); 
     app.post('/gambits/quick', gambitRoute.quickPost);
     
-    app.post('/gambits/:id/reply', gambitRoute.reply); 
-    app.get('/gambits/:id/replies', gambitRoute.replies); 
+    app.get('/gambits/new', gambitRoute.new);
     app.put('/gambits/:id', gambitRoute.update); 
-    app.get('/gambits/:id', gambitRoute.show)
+    app.get('/gambits/:id', gambitRoute.show);
     app.delete('/gambits/:id', gambitRoute.delete); 
+
+    app.get('/gambits/:id/replies', gambitRoute.replies); 
+
+    app.post('/gambits/:id/reply', gambitRoute.reply); 
     app.delete('/gambits/:id/reply', gambitRoute.deleteReply);
     app.put('/gambits/:id/reply/:rid', gambitRoute.updateReply); 
     app.post('/gambits/:id/test', gambitRoute.test)
 
+    // Topics
     app.get('/topics', topicsRoute.index);
     app.post('/topics', topicsRoute.post); 
     app.post('/topics/:id/atf', topicsRoute.atf); 
-    app.get('/topics/:id', topicsRoute.show)
-    
-    app.delete('/topics/:id', topicsRoute.delete); 
-
+    app.get('/topics/:id', topicsRoute.show);
+    app.delete('/topics/:id', topicsRoute.delete);
   });
 
   var server = appServer.listen(port, function () {

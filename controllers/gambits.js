@@ -1,6 +1,5 @@
 
 // Code to count how many capture groups
-// var arbitrary_regex = /(1(2(3)))(?:A)()4(?=B)[(C)][(]D[)]\(E\)(5)/;
 // var num_groups = (new RegExp(arbitrary_regex.toString() + '|')).exec('').length - 1;
 // alert(num_groups);
 
@@ -57,12 +56,16 @@ module.exports = function(models, bot) {
     // JSON endpoint to fetch all replies
     replies: function(req, res) {
       return models.gambit.findById(req.params.id).populate('replies').exec(function(err, gambit){
-        res.json(gambit.replies);
+        if (gambit && gambit.replies) {
+          res.json(gambit.replies);
+        } else {
+          res.json([]);
+        }
+          
       });
     },
 
     update: function(req, res) {
-
       var gambitParams = {
         input: req.body.input,
         isQuestion: (req.body.isQuestion == "on") ? true : false,
@@ -70,6 +73,7 @@ module.exports = function(models, bot) {
       }
 
       models.gambit.findByIdAndUpdate(req.params.id, gambitParams, function(err, me) {
+        console.log(err, me);
         me.save(function(){
           req.flash('success', 'Gambit updated.')
           res.redirect('/gambits/' + req.params.id);          
@@ -89,7 +93,6 @@ module.exports = function(models, bot) {
     },
 
     quickPost: function(req, res) {
-
       if (req.body.input == "" || req.body.reply == "") {
         res.json({error:'missing Input'});
       } else {
@@ -120,8 +123,8 @@ module.exports = function(models, bot) {
       }
     },
 
-    post: function(req, res) {
 
+    post: function(req, res) {
       if (req.body.input == "") {
         req.flash('error', 'Input is Required.')
         res.redirect('/gambits');
@@ -132,12 +135,17 @@ module.exports = function(models, bot) {
           isQuestion: isQuestion,
           qType: req.body.qType
         }
+
+        if (req.params.id) {
+          gambitParams._id = req.params.id;
+        }
+
         var gambit = new models.gambit(gambitParams);
-      
-        if (req.body.reply != "") {
+
+        if (req.body.reply && req.body.reply != "") {
           var replyParams = {
             reply: req.body.reply
-          }
+          };
           
           models.reply.create(replyParams, function(err,reply){
             gambit.replies.addToSet(reply._id);
@@ -145,14 +153,22 @@ module.exports = function(models, bot) {
               req.flash('success', 'Gambit Created')
               res.redirect('/gambits');
             });
-
           });
 
         } else {
           // No Reply Obj.. Just trigger
-          gambit.save(function(err){
-            req.flash('success', 'Gambit Created')
-            res.redirect('/gambits');
+          gambit.save(function(err) {
+            // If we have a RepyId this gambit should be added to that parent
+            if (req.body.replyId) {
+              var addMe = {$addToSet: {gambits: gambit._id}};
+              models.reply.findByIdAndUpdate(req.body.replyId, addMe, function(err, me) {
+                req.flash('success', 'Gambit Created')
+                res.redirect('/gambits');
+              });
+            } else {
+              req.flash('success', 'Gambit Created')
+              res.redirect('/gambits');
+            }          
           });
         }
       }
@@ -176,13 +192,46 @@ module.exports = function(models, bot) {
 
     show: function(req, res) {
       return models.gambit.findById(req.params.id).exec(function(error, gambit) {
-        // what links to this gambit
-        return models.topic.find({ gambits: gambit._id }).exec(function(error, topics) {
-          
-          res.render('gambits/get', {gambit: gambit, topics: topics});
-
-        });
+        return models.topic.find({ gambits: gambit._id })
+          .exec(function(error, topics) {
+            return models.reply.findOne({gambits: req.params.id})
+              .populate('gambits', null, null)
+              .exec(function(error, Reply){
+                // Lets go up one more too
+                if (Reply) {
+                  return models.gambit.findOne({replies: Reply._id})
+                    .populate('replies', null, null)
+                    .exec(function(err, parentGambit){
+                      res.render('gambits/get', {gambit: gambit, topics: topics, reply: Reply, parent: parentGambit});
+                    }
+                  );
+                } else {
+                  res.render('gambits/get', {gambit: gambit, topics: topics, reply: null, parent: null});
+                }
+              }
+            );
+          }
+        );
       });
+    },
+
+    // Render a new gambit form
+    // We create a gambit object but it is not saved.
+    new: function(req, res) {
+      if (req.query.replyId) {
+        return models.gambit.findOne({replies: req.query.replyId})
+          .populate('replies', null, {_id: req.query.replyId})
+          .exec(function(error, parentGambit) {
+            
+            console.log(parentGambit)
+            var gambit = new models.gambit();
+            res.render('gambits/get', {isNew:true, gambit: gambit, topics:[], parent: parentGambit });
+          }
+        );
+      } else {
+        var gambit = new models.gambit();
+        res.render('gambits/get', {isNew:true, gambit: gambit, topics:[]});  
+      }
     }
   }
 }

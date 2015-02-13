@@ -21,6 +21,8 @@
 
 script.
   var socket = io();
+  var lastMessage = "";
+  var lastReplyId, lastTopicId, lastGambitId;
   var oldscrollHeight = $(".panel-body")[0].scrollHeight;
   // Send message
   $('#btn-input').bind('keyup', function(e) {
@@ -34,6 +36,7 @@ script.
     var message = $('#btn-input').val();
     socket.emit('chat message', message);
     $('#btn-input').val("");
+    lastMessage = message;
     var userChat = ich.userChat({string:message});
     $('.chat').append(userChat);
     return false;
@@ -41,10 +44,15 @@ script.
 
   // Recieve Message
   socket.on('chat message', function(msgObj){
-    console.log(msgObj)
+    
+    if (msgObj.replyId && msgObj.gambitId) {
+      lastReplyId = msgObj.replyId;
+      lastGambitId = msgObj.gambitId;
+      lastTopicId = msgObj.topicId;    
+    }
     var botChat = ich.botChat(msgObj);
     $('.chat').append(botChat);
-
+    
     var newscrollHeight = $(".panel-body")[0].scrollHeight;
     if(newscrollHeight > oldscrollHeight){ 
       $(".panel-body").scrollTop($(".panel-body")[0].scrollHeight);
@@ -69,8 +77,8 @@ script.
   $("body").on({
     click:function(e){
       e.preventDefault();
-      $(e.target).parents("li").prev().find('.js-edit').text()
-      $("#formName").val();
+      console.log(lastReplyId)
+      document.location = "/gambits/new?replyId=" + lastReplyId + "&input=" + lastMessage;
     }
   }, ".js-editDirect");
   

@@ -222,9 +222,9 @@ module.exports = function(models, bot) {
         return models.gambit.findOne({replies: req.query.replyId})
           .populate('replies', null, {_id: req.query.replyId})
           .exec(function(error, parentGambit) {
-            
-            console.log(parentGambit)
             var gambit = new models.gambit();
+            gambit.input = req.query.input || "";
+
             res.render('gambits/get', {isNew:true, gambit: gambit, topics:[], parent: parentGambit });
           }
         );

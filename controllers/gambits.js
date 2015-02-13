@@ -6,7 +6,7 @@
 
 // var num_groups = (new RegExp(re.toString() + '|')).exec('').length - 1;
 
-module.exports = function(models) {
+module.exports = function(models, bot) {
   return {
     index : function(req, res) {
       models.topic.find({}, function(err, topics){
@@ -70,17 +70,21 @@ module.exports = function(models) {
       }
 
       models.gambit.findByIdAndUpdate(req.params.id, gambitParams, function(err, me) {
-        req.flash('success', 'Gambit updated.')
-        res.redirect('/gambits/' + req.params.id);
+        me.save(function(){
+          req.flash('success', 'Gambit updated.')
+          res.redirect('/gambits/' + req.params.id);          
+        });
       });
     },
 
     // Test a gambit against input
     test: function(req, res) {
       return models.gambit.findById(req.params.id, function (err, gambit) {
-        gambit.doesMatch({clean:req.body.phrase}, function(err, result){
-          res.json({isValid:result});
-        });        
+        bot.message(req.body.phrase, function(err, messageObj){
+          gambit.doesMatch(messageObj, function(err, result){
+            res.json(result);
+          });                  
+        })
       });
     },
 
@@ -105,7 +109,7 @@ module.exports = function(models) {
           gambit.save(function(err){
 
             var remMe = {$addToSet: {gambits: gambit._id }};
-            models.topic.findOne({name:'random'},  function(err, topic) {
+            models.topic.findOrCreate({name:'random'},  function(err, topic) {
               topic.update(remMe, function(err, xxx){
                 res.json({success:true});  
               });

@@ -62,7 +62,7 @@ script.
   $("body").on({
     click:function(e){
       e.preventDefault();
-      $("#formName").val($(e.target).parents("li").prev().find('.js-edit').text())
+      $("#formName").val($(e.target).parents("li").prev().find('.js-edit').text());
     }
   }, ".js-edit2");
 
@@ -90,7 +90,7 @@ script(id="botChat" type="text/html").
         {{/string}}
         
         {{^string}}
-          <p>Create <a class="js-edit2" href="#"><em>Topic Reply</em></a> or <a class="js-edit2" href="#"><em>Direct Reply</em></a></p>
+          <p>Create <a class="js-edit2" href="#"><em>Topic Reply</em></a> or <a class="" href="#"><em>Direct Reply</em></a></p>
         {{/string}}
 
       {{/gambitId}}

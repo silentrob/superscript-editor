@@ -108,8 +108,18 @@ block content
               phrase: string
             },
             success: function(result) {
-              if (result.isValid) {
-                swal("Tested", "Yay", "success"); 
+              var stars = [];
+
+              if (result) {
+                for (var i = 1; i <= result.length;i++){
+                  stars.push(result[i]);
+                }
+                if (stars.length != 0) {
+                  swal("Tested", "Yay found matches\n" + stars, "success");   
+                } else {
+                  swal("Tested", "Yay it matches","success"); 
+                }
+                
               } else {
                 swal("Tested", "'" + string + "' does not match", "error"); 
               }              

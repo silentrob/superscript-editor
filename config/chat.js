@@ -7,8 +7,14 @@ module.exports = function(io, bot, models) {
       // Emit the message back first
       bot.reply(user_id, msg.trim(), function(err, resObj){
         models.topic.findOne({name:resObj.topicName}, function(err, topic){
-          resObj.topicId = topic._id;
+          if (!topic) {
+            console.log(err);
+          } else {
+            resObj.topicId = topic._id;
+          }
+
           socket.emit('chat message', resObj);
+          
         });
       });
     });

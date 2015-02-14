@@ -3,8 +3,10 @@ block content
   .container
     .row
       .page-header
-        if (parent)
+        if (parent && parent.replies)
           h2 Gambit in reply to '<a href="/gambits/#{parent._id}">#{parent.input}</a>' >> '<a href="/gambits/#{parent._id}">#{parent.replies[0].reply}</a>'
+        else if (parent && parent.gambits)
+          h2 Gambit in topic '<a href="/topics/#{parent._id}">#{parent.name}</a>'
         else
           h2 Gambit
 
@@ -21,10 +23,12 @@ block content
       p.bg-warning= error_messages
 
     form.form-horizontal(action="/gambits/#{gambit._id}", method="post")
-      if (isNew === true && parent)
+      if (isNew === true && parent && parent.replies)
         input(type="hidden", name="replyId", value="#{parent.replies[0]._id}")
+      else if (isNew === true && parent && parent.gambits)
+        input(type="hidden", name="topicId", value="#{parent._id}")
       else 
-        input(type="hidden", name="_method", value="put")
+        input(type="hidden", id="putMethod" name="_method", value="put")
 
       .form-group
         label.col-sm-2.control-label(for='formName') Input
@@ -204,29 +208,34 @@ block content
       $("#replyGroup").on({
         click:function(e){
           e.preventDefault();
-          $group = $(this).parents('.js-reply-group');
-          var replyString = $group.find('.reply').val();
-          var filterFunction = $group.find('.filter').val();
 
-          if (replyString === "") {
-            swal("Ooops...", "Reply can not be empty", "error"); 
+          // Check to make sure the gambit is not new.
+          if ($('#putMethod').length != 0) {
+            $group = $(this).parents('.js-reply-group');
+            var replyString = $group.find('.reply').val();
+            var filterFunction = $group.find('.filter').val();
+
+            if (replyString === "") {
+              swal("Ooops...", "Reply can not be empty", "error"); 
+            } else {
+              $.ajax({ 
+                url: '/gambits/#{gambit._id}/reply', 
+                type: 'POST',
+                data: {
+                  reply: replyString,
+                  filter: filterFunction
+                },
+                success: function(result) {
+                  console.log(result)
+                  var reply = ich.reply(result);
+                  $group.before(reply);
+                  $group.find('input').val("");
+                }
+              });
+            }
           } else {
-            $.ajax({ 
-              url: '/gambits/#{gambit._id}/reply', 
-              type: 'POST',
-              data: {
-                reply: replyString,
-                filter: filterFunction
-              },
-              success: function(result) {
-                console.log(result)
-                var reply = ich.reply(result);
-                $group.before(reply);
-                $group.find('input').val("");
-              }
-            });
+            swal("Ooops...", "We need to create this gambit before adding a reply.\nHit 'Create Gambit' below.", "error"); 
           }
-
         }
       }, ".js-replyAdd");
       

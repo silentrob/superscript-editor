@@ -27,13 +27,6 @@ block content
             td= gambits[i].replies.length
             td
               a(data-id="#{gambits[i]._id}").js-del.btn.btn-danger.btn-xs Delete
-    
-    - if (error_messages.length != 0)
-      p.bg-warning= error_messages
-
-  include ../includes/_gambitform.jade
-    
-
   script.
 
     $(".js-del").click(function(e){

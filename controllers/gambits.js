@@ -127,7 +127,7 @@ module.exports = function(models, bot) {
     post: function(req, res) {
       if (req.body.input == "") {
         req.flash('error', 'Input is Required.')
-        res.redirect('/gambits');
+        res.redirect('back');
       } else {
         var isQuestion = (req.body.isQuestion == "on") ? true : false;
         var gambitParams = {
@@ -151,7 +151,7 @@ module.exports = function(models, bot) {
             gambit.replies.addToSet(reply._id);
             gambit.save(function(err){
               req.flash('success', 'Gambit Created')
-              res.redirect('/gambits');
+              res.redirect('/gambits/' + gambit._id);
             });
           });
 
@@ -163,11 +163,18 @@ module.exports = function(models, bot) {
               var addMe = {$addToSet: {gambits: gambit._id}};
               models.reply.findByIdAndUpdate(req.body.replyId, addMe, function(err, me) {
                 req.flash('success', 'Gambit Created')
-                res.redirect('/gambits');
+                res.redirect('/gambits/' + gambit._id);
+              });
+
+            } else if (req.body.topicId) {
+              var addMe = {$addToSet: {gambits: gambit._id}};
+              models.topic.findByIdAndUpdate(req.body.topicId, addMe, function(err, me) {
+                req.flash('success', 'Gambit Created')
+                res.redirect('/gambits/' + gambit._id);
               });
             } else {
               req.flash('success', 'Gambit Created')
-              res.redirect('/gambits');
+              res.redirect('/gambits/' + gambit._id);
             }          
           });
         }
@@ -228,9 +235,18 @@ module.exports = function(models, bot) {
             res.render('gambits/get', {isNew:true, gambit: gambit, topics:[], parent: parentGambit });
           }
         );
+      } else if (req.query.topicId) {
+
+        return models.topic.findOne({_id: req.query.topicId})
+          .exec(function(error, parentTopic) {
+            var gambit = new models.gambit();
+            gambit.input = req.query.input || "";
+            res.render('gambits/get', {isNew:true, gambit: gambit, topics:[], parent: parentTopic });
+          }
+        );
       } else {
-        var gambit = new models.gambit();
-        res.render('gambits/get', {isNew:true, gambit: gambit, topics:[]});  
+        res.flash("Gambits need to be attached to a topic or reply", "error");
+        res.redirect("back");
       }
     }
   }

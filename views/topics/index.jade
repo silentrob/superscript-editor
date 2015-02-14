@@ -26,9 +26,10 @@ block content
             td= (topics[i].system) ? "Y": "N"
             td= topics[i].gambits.length
             td
+              a(href="/gambits/new?topicId=#{topics[i]._id}").btn.btn-primary.btn-xs New Gambit
+              | &nbsp;
               a(data-id="#{topics[i].id}").js-del.btn.btn-danger.btn-xs Delete
     
-
     - if (error_messages.length != 0)
       p.bg-warning= error_messages
 

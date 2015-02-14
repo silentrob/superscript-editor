@@ -1,17 +1,15 @@
 form.form-horizontal.js-submit(action="/gambits", method="post")
   .form-group
-    label.col-sm-2.control-label(for='formName') Input
+    label.col-sm-2.control-label(for='input') Input
     .col-sm-10
-      input#formName.form-control.input-lg(type='text', name="input", placeholder='Input')
+      input#input.form-control.input-lg(type='text', name="input", placeholder='Input')
   .form-group
     label.col-sm-2.control-label(for='reply') Quick Reply
     .col-sm-10
       input#reply.form-control(type='text', name="reply", placeholder='Quick Reply')
 
-  //- .form-group
-  //-   label.col-sm-2.control-label(for='topicOrReply') Topic Name or ReplyId
-  //-   .col-sm-10
-  //-     input#topicOrReply.form-control(type='text', name="topic", placeholder='')
+      input#topicId.form-control(type='hidden', name="topicId")
+      input#replyId.form-control(type='hidden', name="replyId")
 
   .form-group
     .col-sm-offset-2.col-sm-10
@@ -39,11 +37,16 @@ form.form-horizontal.js-submit(action="/gambits", method="post")
     $('.js-submit').submit(function(e){
       e.preventDefault();
       $.ajax({ 
-        url: '/gambits/quick', 
         type: 'POST',
+        url: '/gambits/quick', 
         data: $( this ).serialize(),
         success: function(result) {
           if (result.success) {
+            $("#topicId").val("");
+            $("#replyId").val("");
+            $("#reply").val("");
+            $("#input").val("");
+
             swal("Sweet", "Gambit Added", "success");   
           } else {
             swal("Sweet", result.error, "error");   

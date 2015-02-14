@@ -59,8 +59,9 @@ conn.once('open', function() {
     // Gambits CRUD and nested replies
     app.get('/gambits', gambitRoute.index);
     app.post('/gambits', gambitRoute.post);
-    app.post('/gambits/:id', gambitRoute.post); 
+    
     app.post('/gambits/quick', gambitRoute.quickPost);
+    app.post('/gambits/:id', gambitRoute.post); 
     
     app.get('/gambits/new', gambitRoute.new);
     app.put('/gambits/:id', gambitRoute.update); 

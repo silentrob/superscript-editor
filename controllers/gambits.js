@@ -32,7 +32,6 @@ module.exports = function(models, bot) {
         filter: req.body.filter
       };
       models.reply.findByIdAndUpdate(req.params.rid, props, function(err, me) {
-        console.log(err, me);
         res.sendStatus(200);
       });
     },
@@ -73,7 +72,6 @@ module.exports = function(models, bot) {
       }
 
       models.gambit.findByIdAndUpdate(req.params.id, gambitParams, function(err, me) {
-        console.log(err, me);
         me.save(function(){
           req.flash('success', 'Gambit updated.')
           res.redirect('/gambits/' + req.params.id);          
@@ -93,9 +91,10 @@ module.exports = function(models, bot) {
     },
 
     quickPost: function(req, res) {
-      if (req.body.input == "" || req.body.reply == "") {
-        res.json({error:'missing Input'});
+      if (!req.body.input || !req.body.reply) {
+        res.json({error:'Missing Input or Reply'});
       } else {
+
         var isQuestion = (req.body.isQuestion == "on") ? true : false;
         var gambitParams = {
           input: req.body.input,
@@ -106,20 +105,32 @@ module.exports = function(models, bot) {
         var replyParams = {
           reply: req.body.reply
         }
-        
-        models.reply.create(replyParams, function(err,reply){
-          gambit.replies.addToSet(reply._id);
-          gambit.save(function(err){
 
-            var remMe = {$addToSet: {gambits: gambit._id }};
-            models.topic.findOrCreate({name:'random'},  function(err, topic) {
-              topic.update(remMe, function(err, xxx){
-                res.json({success:true});  
+        models.reply.create(replyParams, function(err, reply1){
+          // if (err) return res.json(err);
+
+          gambit.replies.addToSet(reply1._id);
+          gambit.save(function(err) {
+
+            if (req.body.topicId == "" && req.body.replyId == "") {
+              models.topic.findOrCreate({name:'random'},  function(err, topic) {
+                var remMe = {$addToSet: {gambits: gambit._id }};
+                topic.update(remMe, function(err){ res.json({success:true}); });
               });
-              
-            });
+            } else if (req.body.topicId) {
+              models.topic.findById(req.body.topicId,  function(err, topic) {
+                var remMe = {$addToSet: {gambits: gambit._id }};
+                topic.update(remMe, function(err){ res.json({success:true}); });
+              });
+            } else if (req.body.replyId) {
+              models.reply.findById(req.body.replyId,  function(err, reply2) {
+                var remMe = {$addToSet: {gambits: gambit._id }};
+                reply2.update(remMe, function(err){ res.json({success:true}); });
+              });
+            }
           });
         });
+
       }
     },
 
@@ -187,11 +198,7 @@ module.exports = function(models, bot) {
           return res.sendStatus(410);
         } else {
           return item.remove(function (err) {
-            if (!err) {
-              return res.send('');
-            } else {
-              console.log(err);
-            }
+            return res.send('');
           });          
         }
       });

@@ -63,22 +63,23 @@ script.
   $("body").on({
     click:function(e){
       e.preventDefault();
-      $("#formName").val($(e.target).text())
+      $("#input").val($(e.target).text())
     }
   }, ".js-edit");
 
   $("body").on({
     click:function(e){
       e.preventDefault();
-      $("#formName").val($(e.target).parents("li").prev().find('.js-edit').text());
+      $("#topicId").val(lastTopicId);
+      $("#input").val($(e.target).parents("li").prev().find('.js-edit').text());
     }
-  }, ".js-edit2");
+  }, ".js-editTopic");
 
   $("body").on({
     click:function(e){
       e.preventDefault();
-      console.log(lastReplyId)
-      document.location = "/gambits/new?replyId=" + lastReplyId + "&input=" + lastMessage;
+      $("#input").val(lastMessage);
+      $("#replyId").val(lastReplyId);
     }
   }, ".js-editDirect");
   
@@ -106,7 +107,7 @@ script(id="botChat" type="text/html").
         {{/string}}
         
         {{^string}}
-          <p>Create <a class="js-edit2" href="#"><em>Topic Reply</em></a> or <a class="js-editDirect" href="#"><em>Direct Reply</em></a></p>
+          <p>Create <a class="js-editTopic" href="#"><em>Topic Reply</em></a> or <a class="js-editDirect" href="#"><em>Direct Reply</em></a></p>
         {{/string}}
 
       {{/gambitId}}

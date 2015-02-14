@@ -1,0 +1,25 @@
+extends ../_layout.jade
+block content
+  .container
+    .row
+      .page-header
+        h1 Replies
+
+      - if (success_messages.length != 0)
+        p.bg-success= success_messages
+
+      table.table.table-bordered.table-condensed
+        thead
+          tr
+            th Reply
+            th(style="width:25px") RC
+            th Action
+
+        - for (var i = 0; i < replies.length; i++)
+          tr 
+            td
+              a(href="/replies/#{replies[i]._id}")= replies[i].reply
+            td= replies[i].gambits.length
+            td
+              a(data-id="#{replies[i]._id}").js-del.btn.btn-danger.btn-xs Delete
+  script.

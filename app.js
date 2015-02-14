@@ -45,6 +45,7 @@ conn.once('open', function() {
     var dashRoutes = require('./controllers/dashboard')(models, botInstance);
     var gambitRoute = require('./controllers/gambits')(models, botInstance);
     var topicsRoute = require('./controllers/topics')(models, botInstance);
+    var repliesRoute = require('./controllers/replies')(models, botInstance);
     var pluginsRoute = require('./controllers/plugins')(models, botInstance);
     
     // General routs
@@ -59,10 +60,13 @@ conn.once('open', function() {
     // Gambits CRUD and nested replies
     app.get('/gambits', gambitRoute.index);
     app.post('/gambits', gambitRoute.post);
+
+    app.get('/replies', repliesRoute.index);
+    app.get('/replies/:id', repliesRoute.show);
     
     app.post('/gambits/quick', gambitRoute.quickPost);
     app.post('/gambits/:id', gambitRoute.post); 
-    
+
     app.get('/gambits/new', gambitRoute.new);
     app.put('/gambits/:id', gambitRoute.update); 
     app.get('/gambits/:id', gambitRoute.show);

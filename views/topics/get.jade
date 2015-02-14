@@ -18,4 +18,5 @@ block content
               a(href="/gambits/#{topic.gambits[i]._id}")= topic.gambits[i].input
               ul
                 - for (var j = 0; j < topic.gambits[i].replies.length; j++)
-                  li= topic.gambits[i].replies[j].reply
+                  li
+                    a(href="/replies/#{topic.gambits[i].replies[j]._id}")= topic.gambits[i].replies[j].reply

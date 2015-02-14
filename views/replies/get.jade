@@ -1,0 +1,22 @@
+extends ../_layout.jade
+block content
+  .container
+    .row
+      .page-header
+        h1 Reply '#{replies.reply}'
+        a.btn.btn-primary.pull-right(href="/gambits/new?replyId=#{replies._id}") Create New Gambit
+
+        - if (success_messages.length != 0)
+          p.bg-success= success_messages
+
+        //- code
+        //-   pre= replies
+
+        ul
+          - for (var i = 0; i < replies.gambits.length; i++)
+            li
+              a(href="/gambits/#{replies.gambits[i]._id}")= replies.gambits[i].input
+              ul
+                - for (var j = 0; j < replies.gambits[i].replies.length; j++)
+                  li
+                    a(href="/replies/#{replies.gambits[i].replies[j]._id}")= replies.gambits[i].replies[j].reply

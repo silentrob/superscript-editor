@@ -4,7 +4,7 @@ block content
     .row
       .page-header
         if (parent && parent.replies)
-          h2 Gambit in reply to '<a href="/gambits/#{parent._id}">#{parent.input}</a>' >> '<a href="/gambits/#{parent._id}">#{parent.replies[0].reply}</a>'
+          h2 Gambit in reply to '<a href="/gambits/#{parent._id}">#{parent.input}</a>' >> '<a href="/replies/#{parent.replies[0]._id}">#{parent.replies[0].reply}</a>'
         else if (parent && parent.gambits)
           h2 Gambit in topic '<a href="/topics/#{parent._id}">#{parent.name}</a>'
         else

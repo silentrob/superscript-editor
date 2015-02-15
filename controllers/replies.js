@@ -19,6 +19,18 @@ module.exports = function(models) {
           res.render('replies/get', {replies:replies});
         });
       });
-    }
+    },
+
+    delete: function (req, res) {
+      return models.reply.findById(req.params.id, function (err, item) {
+        if (!item) {
+          return res.sendStatus(410);
+        } else {
+          return item.remove(function (err) {
+            return res.sendStatus(200);
+          });          
+        }
+      });
+    },
   }
 }

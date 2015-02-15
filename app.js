@@ -63,6 +63,7 @@ conn.once('open', function() {
 
     app.get('/replies', repliesRoute.index);
     app.get('/replies/:id', repliesRoute.show);
+    app.delete('/replies/:id', repliesRoute.delete);
     
     app.post('/gambits/quick', gambitRoute.quickPost);
     app.post('/gambits/:id', gambitRoute.post); 
@@ -82,7 +83,6 @@ conn.once('open', function() {
     // Topics
     app.get('/topics', topicsRoute.index);
     app.post('/topics', topicsRoute.post); 
-    app.post('/topics/:id/atf', topicsRoute.atf); 
     app.get('/topics/:id', topicsRoute.show);
     app.delete('/topics/:id', topicsRoute.delete);
   });

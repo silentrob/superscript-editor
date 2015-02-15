@@ -17,7 +17,7 @@ module.exports = function(models) {
       var system = (req.body.keywords == "on") ? true : false;
 
       if (topicName != "") {
-        new models.topic({name: topicName, keywords: keywords, system: system }).save(function(err){
+        new models.topic({name: topicName, keywords: keywords, system: system, keep:true }).save(function(err){
           if (req.body.name !== topicName) {
             req.flash('success', 'Gambit Created, but we changed the name.');
           } else {
@@ -32,29 +32,6 @@ module.exports = function(models) {
       }
     },
 
-    atf: function(req, res) {
-      if (req.body.topics) {
-        var topics = req.body.topics
-        return models.topic.findById(req.params.id, function(error, topic) {
-          if (_.isString(topics)) {
-            topics = [topics];
-          }
-
-          for (var i = 0; i < topics.length; i++) {
-            topic.gambits.addToSet(topics[i]);  
-          }
-          
-          topic.save(function(err){
-            req.flash('success', 'Topic Updated')
-            res.redirect("/topics/" + req.params.id);
-          });
-
-        });
-      } else {
-        req.flash('error', 'No Gambits selected.')
-        res.redirect("/topics/" + req.params.id);
-      }
-    },
 
     delete: function (req, res) {
       return models.topic.findById(req.params.id, function (err, item) {
@@ -62,11 +39,7 @@ module.exports = function(models) {
           return res.sendStatus(410);
         } else {
           return item.remove(function (err) {
-            if (!err) {
-              return res.send('');
-            } else {
-              console.log(err);
-            }
+            return res.sendStatus(200);
           });          
         }
       });

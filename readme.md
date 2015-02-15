@@ -12,10 +12,11 @@ An entirly new way to create chatbots using SuperScript. Featuring a built-in re
 We are assuming you have node.js 0.10.x installed and MongoDB.
 
     git clone https://github.com/silentrob/superscript-editor.git
-
+    cd superscript-editor
     npm install
-
     npm start
+
+    Then Open your browser to http://localhost:3000
 
 ## Terminology
 

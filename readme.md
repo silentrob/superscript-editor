@@ -7,6 +7,32 @@ An entirly new way to create chatbots using SuperScript. Featuring a built-in re
 ![Realtime Editor](public/img/gambit.png)
 
 
+## Install
+
+We are assuming you have node.js 0.10.x installed and MongoDB.
+
+    git clone https://github.com/silentrob/superscript-editor.git
+
+    npm install
+
+    npm start
+
+## Terminology
+
+### Topics
+I topic is the main entry point into your application. All your conversaions start within a topic depending on what exactly was said the first topic could vary. SuperScript will continue to seatch topics until it finds a matching Gambit, then replies.
+
+### Gambits
+A Gambit is a piece of information, in SuperScript it contains two parts an input and one or more replies. The input is the basis of the trigger that we match on.
+
+### Reply
+This is what is said back to the user, and is the part of a Gambit. A reply can also have a series of Gambits attached to them thus creating a thread of conversation.
+
+## Docs
+
+More information on using SuperScript and this Editor is available at http://superscriptjs.com. 
+
+
 ## License
 
 [The MIT License (MIT)](LICENSE.md)

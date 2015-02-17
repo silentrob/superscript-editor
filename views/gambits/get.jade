@@ -151,7 +151,7 @@ block content
           prefetch: {
             url: '/plugins',
             filter: function(list) {
-              return $.map(list, function(country) { return { name: country }; });
+              return $.map(list, function(plugin) { return { name: plugin }; });
             }
           }
         });
@@ -159,7 +159,7 @@ block content
         // kicks off the loading/processing of `local` and `prefetch`
         plugins.initialize();
         $('.typeahead').typeahead(null, {
-          name: 'countries',
+          name: 'plugins',
           displayKey: 'name',
           source: plugins.ttAdapter()
         });
@@ -184,8 +184,9 @@ block content
           var $group = $(this).parents('.js-reply-group');
           var replyId = $group.data('id');
           var replyString = $group.find('.reply').val();
-          var filterFunction = $group.find('.filter').val();
-
+          //- var filterFunction = $group.find('.filter').val();
+          var filterFunction = $group.find('.typeahead').typeahead('val');
+          
           if (replyString === "") {
             swal("Ooops...", "Reply can not be empty", "error"); 
           } else {

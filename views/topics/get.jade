@@ -1,16 +1,53 @@
 extends ../_layout.jade
 block content
   .container
+    a.btn.btn-primary.pull-right(href="/gambits/new?topicId=#{topic._id}") Create New Gambit
+      
+    - if (success_messages.length != 0)
+      p.bg-success= success_messages
+
     .row
       .page-header
-        h1 Topic '#{topic.name}'
-        a.btn.btn-primary.pull-right(href="/gambits/new?topicId=#{topic._id}") Create New Gambit
+        h1 Edit Topic '#{topic.name}'
 
-        - if (success_messages.length != 0)
-          p.bg-success= success_messages
+        - if (error_messages.length != 0)
+          p.bg-warning= error_messages
 
-        //- code
-        //-   pre= topic
+        form.form-horizontal(action="/topics/#{topic._id}", method="post")
+          input(type="hidden" name="_method", value="put")
+
+          .form-group
+            label.col-sm-2.control-label(for='formName') Topic Name
+            .col-sm-10
+              input#formName.form-control(type='text', name="name", placeholder='Topic Name', value='#{topic.name}')
+          .form-group
+            label.col-sm-2.control-label(for='keywords') Keywords
+            .col-sm-10
+              input#keywords.form-control(type='text', name="keywords", placeholder='Topic Keywords', value='#{topic.keywords}')
+          .form-group
+            .col-sm-offset-2.col-sm-10
+              .checkbox
+                label
+                  - if (topic.system)
+                    input(type='checkbox', name="system", checked="checked") 
+                  - else 
+                    input(type='checkbox', name="system" ) 
+                  | System Topic
+          .form-group
+            .col-sm-offset-2.col-sm-10
+              .checkbox
+                label
+                  - if (topic.keep)
+                    input(type='checkbox', name="keep", checked="checked") 
+                  - else 
+                    input(type='checkbox', name="keep" ) 
+                  | Keep Topic                  
+          .form-group
+            .col-sm-offset-2.col-sm-10
+              button.btn.btn-default(type='submit') Update Topic
+
+        code
+          pre= topic
 
         ul
           - for (var i = 0; i < topic.gambits.length; i++)

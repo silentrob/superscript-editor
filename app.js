@@ -84,6 +84,7 @@ conn.once('open', function() {
     app.get('/topics', topicsRoute.index);
     app.post('/topics', topicsRoute.post); 
     app.get('/topics/:id', topicsRoute.show);
+    app.put('/topics/:id', topicsRoute.update);
     app.delete('/topics/:id', topicsRoute.delete);
   });
 

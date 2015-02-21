@@ -15,6 +15,7 @@ block content
             th Name
             th Keywords
             th System
+            th keep
             th(style="width:25px") GC
             th Action
 
@@ -24,6 +25,7 @@ block content
               a(href="/topics/#{topics[i].id}")= topics[i].name
             td= topics[i].keywords
             td= (topics[i].system) ? "Y": "N"
+            td= (topics[i].keep) ? "Y": "N"
             td= topics[i].gambits.length
             td
               a(href="/gambits/new?topicId=#{topics[i]._id}").btn.btn-primary.btn-xs New Gambit

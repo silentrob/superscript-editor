@@ -14,7 +14,7 @@ module.exports = function(models) {
       topicName = topicName.replace(/\s/g,"_");
 
       var keywords = req.body.keywords.split(",");
-      var system = (req.body.keywords == "on") ? true : false;
+      var system = (req.body.system == "on") ? true : false;
 
       if (topicName != "") {
         new models.topic({name: topicName, keywords: keywords, system: system, keep:true }).save(function(err){
@@ -29,6 +29,32 @@ module.exports = function(models) {
       } else {
         req.flash('error', 'Topic Name is required.')
         res.redirect("/topics");
+      }
+    },
+
+
+    update: function(req, res) {
+      var topicName = req.body.name.toLowerCase();
+      topicName = topicName.replace(/\s/g,"_");
+
+      var keywords = req.body.keywords.split(",");
+      var system = (req.body.system == "on") ? true : false;
+      var keep = (req.body.keep == "on") ? true : false;
+
+      if (topicName != "") {
+        models.topic.findById(req.params.id, function (err, topic) {
+          topic.keywords = keywords;
+          topic.name = topicName;
+          topic.keep = keep;
+          topic.system = system;
+          topic.save(function(){
+            req.flash('success', 'Gambit Created');  
+            res.redirect('back');
+          });
+        }); 
+      } else {
+        req.flash('error', 'Topic Name is required.')
+        res.redirect("back");
       }
     },
 

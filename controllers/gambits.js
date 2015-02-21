@@ -115,12 +115,18 @@ module.exports = function(models, bot) {
             if (req.body.topicId == "" && req.body.replyId == "") {
               models.topic.findOrCreate({name:'random'},  function(err, topic) {
                 var remMe = {$addToSet: {gambits: gambit._id }};
-                topic.update(remMe, function(err){ res.json({success:true}); });
+                topic.update(remMe, function(err){ 
+                  topic.sortGambits();
+                  res.json({success:true}); 
+                });
               });
             } else if (req.body.topicId) {
               models.topic.findById(req.body.topicId,  function(err, topic) {
                 var remMe = {$addToSet: {gambits: gambit._id }};
-                topic.update(remMe, function(err){ res.json({success:true}); });
+                topic.update(remMe, function(err){ 
+                  topic.sortGambits();
+                  res.json({success:true}); 
+                });
               });
             } else if (req.body.replyId) {
               models.reply.findById(req.body.replyId,  function(err, reply2) {

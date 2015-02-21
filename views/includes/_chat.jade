@@ -70,7 +70,9 @@ script.
   $("body").on({
     click:function(e){
       e.preventDefault();
-      $("#topicId").val(lastTopicId);
+      $('#replyId').val('');
+      $('#topicGroup').removeClass('hidden');
+      $('#topicId option[value="'+lastTopicId+'"]').prop('selected', true);
       $("#input").val($(e.target).parents("li").prev().find('.js-edit').text());
     }
   }, ".js-editTopic");
@@ -79,7 +81,10 @@ script.
     click:function(e){
       e.preventDefault();
       $("#input").val(lastMessage);
+      $('#topicGroup').addClass('hidden');
       $("#replyId").val(lastReplyId);
+      // Reset the list
+      $('#topicId option[value=""]').prop('selected', true);
     }
   }, ".js-editDirect");
   

@@ -7,9 +7,16 @@ form.form-horizontal.js-submit(action="/gambits", method="post")
     label.col-sm-2.control-label(for='reply') Quick Reply
     .col-sm-10
       input#reply.form-control(type='text', name="reply", placeholder='Quick Reply')
-
-      input#topicId.form-control(type='hidden', name="topicId")
       input#replyId.form-control(type='hidden', name="replyId")
+
+  .form-group#topicGroup
+    label.col-sm-2.control-label(for='reply') Topic
+    .col-sm-5
+      select#topicId.form-control(name="topicId")
+        option(value="") None
+        -for(var i = 0; i < topics.length; i++)
+          option(value="#{topics[i]._id}")= topics[i].name
+
 
   .form-group
     .col-sm-offset-2.col-sm-10

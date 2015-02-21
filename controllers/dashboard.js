@@ -3,7 +3,9 @@ module.exports = function(models) {
 
   return {
     index: function(req, res) {
-      res.render('index', { title: 'SuperScript Community Editor'});
+      models.topic.find({}, null, {sort:{name:1}}, function(err, topics) {
+        res.render('index', { title: 'SuperScript Community Editor', topics: topics });
+      });
     },
 
     docs: function(req, res) {

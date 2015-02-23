@@ -47,7 +47,8 @@ conn.once('open', function() {
     var topicsRoute = require('./controllers/topics')(models, botInstance);
     var repliesRoute = require('./controllers/replies')(models, botInstance);
     var pluginsRoute = require('./controllers/plugins')(models, botInstance);
-    
+    var knowledgeRoute = require('./controllers/knowledge')(models, botInstance);
+
     // General routs
     app.get('/', dashRoutes.index);
     app.get('/docs', dashRoutes.docs);
@@ -56,6 +57,13 @@ conn.once('open', function() {
 
     // Plugin JSON
     app.get('/plugins', pluginsRoute.getJSON);
+
+    app.get('/knowledge', knowledgeRoute.index);
+    app.get('/knowledge/user', knowledgeRoute.user);
+    app.get('/knowledge/bot', knowledgeRoute.bot);
+    app.get('/knowledge/world', knowledgeRoute.world);
+    
+    
 
     // Gambits CRUD and nested replies
     app.get('/gambits', gambitRoute.index);

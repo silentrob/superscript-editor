@@ -19,8 +19,12 @@ block content
         //-   pre= parent
         //-   pre= reply
 
-    - if (error_messages.length != 0)
-      p.bg-warning= error_messages
+    .row
+      - if (error_messages.length != 0)
+        p.bg-warning= error_messages
+
+      - if (gambit.input == gambit.trigger && /(~\w+)/.test(gambit.input))
+        p.clearfix.pull-right.label.label-warning Concept Not Expanded
 
     form.form-horizontal(action="/gambits/#{gambit._id}", method="post")
       if (isNew === true && parent && parent.replies)

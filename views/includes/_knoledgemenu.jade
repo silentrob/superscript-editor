@@ -1,0 +1,26 @@
+mixin subNav(tab)
+  ul.nav.nav-tabs
+    if tab == 'concepts'
+      +tab('Concepts', '/knowledge')(class='active')
+    else
+      +tab('Concepts', '/knowledge')
+
+    if tab == 'world'
+      +tab('World knowledge', '/knowledge/world')(class='active')
+    else
+      +tab('World knowledge', '/knowledge/world')
+
+    if (tab == 'bot')
+      +tab('Bot knowledge', '/knowledge/bot')(class='active')
+    else
+      +tab('Bot knowledge', '/knowledge/bot')
+
+    if (tab == 'user')
+      +tab('User knowledge', '/knowledge/user')(class='active')
+    else
+      +tab('User knowledge', '/knowledge/user')
+      
+
+mixin tab(name, href)
+  li(class!=attributes.class)
+    a(href=href)= name

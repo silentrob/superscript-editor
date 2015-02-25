@@ -1,6 +1,6 @@
 module.exports = function(io, bot, models) {
   io.on('connection', function(socket) {
-    var user_id = socket.handshake.address;
+    var user_id = "testUser";
     socket.emit('chat message', {string:'Welcome to the real-time editor.'});
     
     socket.on('chat message', function(msg){

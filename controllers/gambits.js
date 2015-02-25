@@ -60,22 +60,21 @@ module.exports = function(models, bot) {
         } else {
           res.json([]);
         }
-          
       });
     },
 
     update: function(req, res) {
-      var gambitParams = {
-        input: req.body.input,
-        isQuestion: (req.body.isQuestion == "on") ? true : false,
-        qType: req.body.qType
-      }
 
-      models.gambit.findByIdAndUpdate(req.params.id, gambitParams, function(err, me) {
-        me.save(function(){
-          req.flash('success', 'Gambit updated.')
+      models.gambit.findById(req.params.id, function(err, me) {
+        me.input = req.body.input;
+        me.isQuestion = (req.body.isQuestion == "on") ? true : false;
+        me.qType = req.body.qType;
+
+        me.save(function() {
+          req.flash('success', 'Gambit updated.');
           res.redirect('/gambits/' + req.params.id);          
         });
+
       });
     },
 

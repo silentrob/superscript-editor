@@ -5,8 +5,46 @@ block content
     .row
       +subNav('concepts')
 
-    .row
-      
+      .bs-callout.bs-callout-default
+        h4 Concept Hierarchy
+        p Concept table
 
+      .form-group.pull-right
+        form#target(action="/knowledge/concepts/import" method="post" enctype="multipart/form-data")
+          span.btn.btn-default.btn-file
+            | Load Concepts 
+            input#datafile(type='file' name="file")
 
-      
+      if (concept)
+        h3 Exploring #{concept[0].subject}
+
+        table.table.table-bordered.table-condensed
+          thead
+            tr
+              th Subject
+              th Predicate
+              th Object
+
+          - for (var i = 0; i < concept.length; i++)
+            tr 
+              td= concept[i].subject
+              td= concept[i].predicate
+              td= concept[i].object
+
+      if (concepts)
+        table.table.table-bordered.table-condensed
+          thead
+            tr
+              th name
+              th count
+              th Action
+
+          - for (var i = 0; i < concepts.length; i++)
+            tr 
+              td
+                a(href="/knowledge/concept/#{concepts[i].subject}")= concepts[i].subject
+
+  script.
+    $('#datafile').change(function() {
+      $('#target').submit();
+    });

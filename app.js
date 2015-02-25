@@ -16,7 +16,6 @@ var dbName = process.env.BOT || "testbot";
 var config = { db: 'mongodb://localhost/' + dbName }
 var options = { server: { socketOptions: { keepAlive: 1 } } };
 var factSystem = sfact.create(dbName);
-var users = [];
 
 mongoose.connect(config.db, options, function(err){
   if (err) console.log("Error connecting to the MongoDB --", err);
@@ -24,7 +23,8 @@ mongoose.connect(config.db, options, function(err){
 
 var botOptions = {
   mongoose : mongoose,
-  factSystem: factSystem
+  factSystem: factSystem,
+  editMode : true
 }
 var botData = [];
 
@@ -62,8 +62,16 @@ conn.once('open', function() {
     app.get('/knowledge/user', knowledgeRoute.user);
     app.get('/knowledge/bot', knowledgeRoute.bot);
     app.get('/knowledge/world', knowledgeRoute.world);
+    app.get('/knowledge/concept/:name', knowledgeRoute.concept);
     
-    
+    app.delete('/knowledge/bot', knowledgeRoute.botDelete);
+    app.delete('/knowledge/world', knowledgeRoute.worldDelete);
+
+    app.post('/knowledge/bot/import',knowledgeRoute.botImport);
+    app.post('/knowledge/world/import',knowledgeRoute.worldImport);
+    app.post('/knowledge/concepts/import', knowledgeRoute.worldImport);
+
+
 
     // Gambits CRUD and nested replies
     app.get('/gambits', gambitRoute.index);

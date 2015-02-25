@@ -5,4 +5,65 @@ block content
     .row
       
       +subNav('bot')
-      
+
+      .bs-callout.bs-callout-default
+        h4 Bot Facts and Knowledge
+        p This table represents things the bot knows about itself.
+
+      .form-group.pull-right
+        form#target(action="/knowledge/bot/import" method="post" enctype="multipart/form-data")
+          span.btn.btn-default.btn-file
+            | Load Facts 
+            input#datafile(type='file' name="file")
+
+      table.table.table-bordered.table-condensed
+        thead
+          tr
+            th Subject
+            th Predicate
+            th Object
+            th Action
+
+        - for (var i = 0; i < concepts.length; i++)
+          tr 
+            td= concepts[i].subject
+            td= concepts[i].predicate
+            td= concepts[i].object
+            td
+              a(data-s="#{concepts[i].subject}", data-p="#{concepts[i].predicate}", data-o="#{concepts[i].object}").js-del.btn.btn-danger.btn-xs Delete
+
+  script.
+    $('#datafile').change(function() {
+      $('#target').submit();
+    });
+
+    $(".js-del").click(function(e){
+      var s = $(e.target).data('s');
+      var p = $(e.target).data('p');
+      var o = $(e.target).data('o');
+
+      swal({
+        title: "Are you sure?",   
+        text: "You will not be able to recover this fact!",   
+        type: "warning",   
+        showCancelButton: true,   
+        confirmButtonColor: "#DD6B55",   
+        confirmButtonText: "Yes, delete it!",   
+        closeOnConfirm: true 
+      }, function(){   
+        $.ajax({ 
+          url: '/knowledge/bot/',
+          type: 'DELETE',
+          data: {
+            s: s,
+            p: p,
+            o: o
+          },
+          success: function(result) {
+            $(e.target).parents('tr').remove();
+          }
+        });
+      });
+    });
+
+

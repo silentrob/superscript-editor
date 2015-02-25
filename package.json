@@ -29,9 +29,9 @@
     "mongoose": "^3.8.22",
     "morgan": "^1.5.1",
     "multer": "^0.1.7",
-    "sfacts": "0.0.8",
+    "sfacts": "0.0.9",
     "socket.io": "^1.3.3",
-    "superscript": "^0.6.2",
+    "superscript": "^0.6.4",
     "underscore": "^1.7.0",
     "view-helpers": "^0.1.5"
   }

@@ -17,8 +17,6 @@ module.exports = function(models) {
     },
 
     postdata: function(req, res) {
-      console.log(req.files.file.path);
-
       models.importer(req.files.file.path, function(){
         req.flash("success","Data file Imported");
         res.redirect("/");  

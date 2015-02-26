@@ -49,7 +49,7 @@ module.exports = function(models, bot) {
     },
 
     world: function(req, res) {
-      bot.factSystem.db.get({}, function(err, items) {
+      bot.factSystem.db.get({limit: 100, offset: 0}, function(err, items) {
         res.render('knowledge/world', {concepts:items});
       });
     },

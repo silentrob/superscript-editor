@@ -27,9 +27,11 @@ block content
 
         - for (var i = 0; i < concepts.length; i++)
           tr 
-            td= concepts[i].subject
+            td
+              a(href="/knowledge/concept/#{concepts[i].subject}")= concepts[i].subject
             td= concepts[i].predicate
-            td= concepts[i].object
+            td
+              a(href="/knowledge/concept/#{concepts[i].object}")= concepts[i].object
             td
               a(data-s="#{concepts[i].subject}", data-p="#{concepts[i].predicate}", data-o="#{concepts[i].object}").js-del.btn.btn-danger.btn-xs Delete
 

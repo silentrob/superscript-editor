@@ -24,27 +24,58 @@ block content
               th Subject
               th Predicate
               th Object
+              td Action
 
           - for (var i = 0; i < concept.length; i++)
             tr 
               td= concept[i].subject
               td= concept[i].predicate
-              td= concept[i].object
-
-      if (concepts)
-        table.table.table-bordered.table-condensed
-          thead
-            tr
-              th name
-              th count
-              th Action
-
-          - for (var i = 0; i < concepts.length; i++)
-            tr 
               td
+                 a(href="/knowledge/concept/#{concept[i].object}")= concept[i].object
+              td
+                 a(data-s="#{concept[i].subject}", data-p="#{concept[i].predicate}", data-o="#{concept[i].object}").js-del.btn.btn-danger.btn-xs Delete
+
+      if (concepts)     
+        table.table.table-bordered.table-condensed
+          tr 
+          - for (var i = 0; i < concepts.length; i++)
+            if (i % 6 == 0) 
+              tr
+            else
+              td 
                 a(href="/knowledge/concept/#{concepts[i].subject}")= concepts[i].subject
 
   script.
     $('#datafile').change(function() {
       $('#target').submit();
+    });
+
+
+    $(".js-del").click(function(e){
+      var s = $(e.target).data('s');
+      var p = $(e.target).data('p');
+      var o = $(e.target).data('o');
+
+      swal({
+        title: "Are you sure?",   
+        text: "You will not be able to recover this fact!",   
+        type: "warning",   
+        showCancelButton: true,   
+        confirmButtonColor: "#DD6B55",   
+        confirmButtonText: "Yes, delete it!",   
+        closeOnConfirm: true 
+      }, function(){   
+        $.ajax({ 
+          url: '/knowledge/world/',
+          type: 'DELETE',
+          data: {
+            s: s,
+            p: p,
+            o: o
+          },
+          success: function(result) {
+            $(e.target).parents('tr').remove();
+          }
+        });
+      });
     });

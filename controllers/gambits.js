@@ -203,7 +203,7 @@ module.exports = function(models, bot) {
           return res.sendStatus(410);
         } else {
           return item.remove(function (err) {
-            return res.send('');
+            return res.redirect('/gambits');
           });          
         }
       });

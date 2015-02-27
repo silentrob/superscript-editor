@@ -1,0 +1,25 @@
+extends ./_layout.jade
+block content
+  .container
+    .row
+      .page-header
+        h1 Settings
+    .row
+
+      - if (success_messages.length != 0)
+        p.bg-success= success_messages
+
+      - if (error_messages.length != 0)
+        p.bg-warning= error_messages
+
+
+      h4 Enable Slack
+      p Turn on intergrated Slack Support. By enabling this option and adding a skack token your bot will join the channel with the same gambits loaded here.
+      form(action="/settings/slack" method="post" enctype="multipart/form-data")
+        .form-group
+          label.control-label(for='inputToken') Slack API Token
+          input#inputToken.form-control(type='text', name="token", value="#{token}", placeholder='Slack Token')
+        .form-group
+            input.btn.btn-success(type='submit', name="start", value="Start") 
+            | 
+            input.btn.btn-danger(type='submit', name="stop", value="Stop")

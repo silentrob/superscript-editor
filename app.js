@@ -17,6 +17,11 @@ var config = { db: 'mongodb://localhost/' + dbName }
 var options = { server: { socketOptions: { keepAlive: 1 } } };
 var factSystem = sfact.create(dbName);
 
+var findOrCreate = require('mongoose-findorcreate');
+var settingsSchema = new mongoose.Schema({ key:  String, value: String });
+settingsSchema.plugin(findOrCreate);
+Settings = mongoose.model('Settings', settingsSchema);
+
 mongoose.connect(config.db, options, function(err){
   if (err) console.log("Error connecting to the MongoDB --", err);
 });
@@ -31,7 +36,6 @@ var botData = [];
 app.projectName = dbName;
 var conn = mongoose.connection;
 
-
 conn.once('open', function() {
 
   var models = require('superscript/lib/topics/index')(mongoose, factSystem);
@@ -42,7 +46,7 @@ conn.once('open', function() {
   new ss(botOptions, function(err, botInstance){
     require('./config/chat')(io, botInstance, models);
 
-    var dashRoutes = require('./controllers/dashboard')(models, botInstance);
+    var dashRoutes = require('./controllers/dashboard')(models, botInstance, app.projectName);
     var gambitRoute = require('./controllers/gambits')(models, botInstance);
     var topicsRoute = require('./controllers/topics')(models, botInstance);
     var repliesRoute = require('./controllers/replies')(models, botInstance);
@@ -52,6 +56,8 @@ conn.once('open', function() {
     // General routs
     app.get('/', dashRoutes.index);
     app.get('/docs', dashRoutes.docs);
+    app.get('/settings', dashRoutes.settings);
+    app.post('/settings/slack', dashRoutes.postSlack);
     app.get('/import', dashRoutes.load);
     app.post('/import', dashRoutes.postdata);
 
@@ -70,8 +76,6 @@ conn.once('open', function() {
     app.post('/knowledge/bot/import',knowledgeRoute.botImport);
     app.post('/knowledge/world/import',knowledgeRoute.worldImport);
     app.post('/knowledge/concepts/import', knowledgeRoute.worldImport);
-
-
 
     // Gambits CRUD and nested replies
     app.get('/gambits', gambitRoute.index);

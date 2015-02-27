@@ -16,6 +16,30 @@ block content
             | Load Facts 
             input#datafile(type='file' name="file")
 
+      - if (success_messages.length != 0)
+        p.bg-success= success_messages
+
+      - if (error_messages.length != 0)
+        p.bg-warning= error_messages
+
+
+      form.form-inline(action="/knowledge/bot" method="post")
+        .form-group
+          label.sr-only(for='subject') Subject 
+          input#subject.form-control(type='text', name="subject", placeholder='Subject') 
+          | &nbsp;
+        .form-group
+          label.sr-only(for='predicate') Predicate 
+          input#predicate.form-control(type='text', name="predicate", placeholder='Predicate') 
+          | &nbsp;
+        .form-group
+          label.sr-only(for='object') Object 
+          input#object.form-control(type='text', name="object", placeholder='Object') 
+          | &nbsp;
+
+        button.btn.btn-default(type='submit') Create Fact 
+
+
       table.table.table-bordered.table-condensed
         thead
           tr

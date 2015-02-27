@@ -69,7 +69,12 @@ conn.once('open', function() {
     app.get('/knowledge/bot', knowledgeRoute.bot);
     app.get('/knowledge/world', knowledgeRoute.world);
     app.get('/knowledge/concept/:name', knowledgeRoute.concept);
+
+    app.post('/knowledge/bot', knowledgeRoute.addBot);
+    app.post('/knowledge/world', knowledgeRoute.addWorld);
     
+    
+    app.delete('/knowledge/user', knowledgeRoute.userDelete);
     app.delete('/knowledge/bot', knowledgeRoute.botDelete);
     app.delete('/knowledge/world', knowledgeRoute.worldDelete);
 

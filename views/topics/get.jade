@@ -46,6 +46,17 @@ block content
             .col-sm-offset-2.col-sm-10
               button.btn.btn-default(type='submit') Update Topic
 
+        form.form-horizontal.js-submitTest
+          .form-group
+            label.col-sm-2.control-label(for='testPhrase') Test phrase
+            .col-sm-10
+              input#testPhrase.form-control.input-lg(type='text', name="phrase", placeholder='Test Phrase')
+
+          .form-group
+            .col-sm-offset-2.col-sm-10
+              a.js-testPhrase.btn.btn-default Test for Match
+
+
         //- code
         //-   pre= topic
 
@@ -57,3 +68,49 @@ block content
                 - for (var j = 0; j < topic.gambits[i].replies.length; j++)
                   li
                     a(href="/replies/#{topic.gambits[i].replies[j]._id}")= topic.gambits[i].replies[j].reply
+
+      script.
+        $('.js-submitTest').submit(function(e){
+          e.preventDefault();
+          $('.js-testPhrase').trigger('click');
+        });
+
+        // Check to see if we can match
+        $('.js-testPhrase').click(function(e){
+          e.preventDefault;
+          var string = $("#testPhrase").val();
+
+          $.ajax({ 
+            url: '/topics/#{topic._id}/test', 
+            type: 'POST',
+            data: {
+              phrase: string
+            },
+            success: function(result) {
+              var stars = [];
+
+              if (result.length !== 0) {
+                swal("Tested", "Yay found matches", "success");   
+              } else {
+                //- swal({   
+                //-   title: "Are you sure?",   
+                //-   text: "You will not be able to recover this imaginary file!",   
+                //-   type: "warning",   
+                //-   showCancelButton: true,   
+                //-   confirmButtonColor: "#DD6B55",   
+                //-   confirmButtonText: "Yes, delete it!",   
+                //-   closeOnConfirm: false 
+                //- }, function(){   
+                //-   swal("Deleted!", "Your imaginary file has been deleted.", "success"); 
+                //- });
+
+                swal({
+                  title:"Tested", 
+                  text: "'" + string + "' does not match.\n <a href='/gambits/new?topicId=#{topic._id}&input="+string+"'>Create Gambit</a>", 
+                  type: "error",
+                  html: true
+                }); 
+              }
+            }
+          });
+        });                    

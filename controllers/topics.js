@@ -1,7 +1,7 @@
 var _ = require("underscore");
 var async = require("async");
 
-module.exports = function(models) {
+module.exports = function(models, bot) {
   return {
     index : function(req, res) {
       models.topic.find({}, null, {sort:{name:1}}, function(err, topics){
@@ -31,7 +31,6 @@ module.exports = function(models) {
         res.redirect("/topics");
       }
     },
-
 
     update: function(req, res) {
       var topicName = req.body.name.toLowerCase();
@@ -87,8 +86,18 @@ module.exports = function(models) {
             res.render('topics/get', {topic: topic, gambits:gambits });
           });
         });
-
       });
-    }
+    },
+
+    // Test a topic against input
+    test: function(req, res) {
+      return models.topic.findById(req.params.id, function (err, topic) {
+        bot.message(req.body.phrase, function(err, messageObj){
+          topic.doesMatch(messageObj, function(err, result){
+            res.json(result);
+          });                  
+        })
+      });
+    },
   }
 }

@@ -27,3 +27,7 @@
     cursor: inherit;
     display: block;
 }
+
+.hilite {
+  background-color: yellow;
+}

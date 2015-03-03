@@ -62,7 +62,7 @@ block content
 
         ul
           - for (var i = 0; i < topic.gambits.length; i++)
-            li
+            li(id="#{topic.gambits[i]._id}")
               a(href="/gambits/#{topic.gambits[i]._id}")= topic.gambits[i].input
               ul
                 - for (var j = 0; j < topic.gambits[i].replies.length; j++)
@@ -72,6 +72,7 @@ block content
       script.
         $('.js-submitTest').submit(function(e){
           e.preventDefault();
+          $(".hilite").removeClass("hilite");
           $('.js-testPhrase').trigger('click');
         });
 
@@ -90,19 +91,13 @@ block content
               var stars = [];
 
               if (result.length !== 0) {
-                swal("Tested", "Yay found matches", "success");   
+                for (var i = 0; i < result.length; i++) {
+                  $("#" + result[i]._id).addClass("hilite");
+                }
+
+                swal("Tested", "Yay found matches", "success");
               } else {
-                //- swal({   
-                //-   title: "Are you sure?",   
-                //-   text: "You will not be able to recover this imaginary file!",   
-                //-   type: "warning",   
-                //-   showCancelButton: true,   
-                //-   confirmButtonColor: "#DD6B55",   
-                //-   confirmButtonText: "Yes, delete it!",   
-                //-   closeOnConfirm: false 
-                //- }, function(){   
-                //-   swal("Deleted!", "Your imaginary file has been deleted.", "success"); 
-                //- });
+
 
                 swal({
                   title:"Tested", 

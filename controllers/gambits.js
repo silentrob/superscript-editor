@@ -69,6 +69,7 @@ module.exports = function(models, bot) {
         me.input = req.body.input;
         me.isQuestion = (req.body.isQuestion == "on") ? true : false;
         me.qType = req.body.qType;
+        me.filter = req.body.filter;
 
         me.save(function() {
           req.flash('success', 'Gambit updated.');

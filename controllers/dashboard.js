@@ -63,10 +63,15 @@ module.exports = function(models, bot, project) {
     },
 
     postdata: function(req, res) {
-      models.importer(req.files.file.path, function(){
-        req.flash("success","Data file Imported");
-        res.redirect("/");  
-      });
+      if (req.files && req.files.file && req.files.file.path) {
+        models.importer(req.files.file.path, function(){
+          req.flash("success","Data file Imported");
+          res.redirect("/");  
+        });        
+      } else {
+        req.flash("error","Missing Data file.");
+        res.redirect("back");  
+      }
     }
 
   }

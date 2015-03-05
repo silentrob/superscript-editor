@@ -1,8 +1,15 @@
 extends ../_layout.jade
 block content
   .container
-    a.btn.btn-primary.pull-right(href="/gambits/new?topicId=#{topic._id}") Create New Gambit
-      
+    
+    form(action="/topics/#{topic._id}/sort" method="post")
+      .form-group
+          button.btn.btn-warning.pull-right(type='submit') Sort Topic 
+          | &nbsp;
+          a.btn.btn-primary.pull-right(href="/gambits/new?topicId=#{topic._id}") Create New Gambit 
+          | &nbsp;
+
+  
     - if (success_messages.length != 0)
       p.bg-success= success_messages
 
@@ -45,6 +52,8 @@ block content
           .form-group
             .col-sm-offset-2.col-sm-10
               button.btn.btn-default(type='submit') Update Topic
+
+
 
         form.form-horizontal.js-submitTest
           .form-group

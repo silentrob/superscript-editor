@@ -73,7 +73,6 @@ conn.once('open', function() {
     app.post('/knowledge/bot', knowledgeRoute.addBot);
     app.post('/knowledge/world', knowledgeRoute.addWorld);
     
-    
     app.delete('/knowledge/user', knowledgeRoute.userDelete);
     app.delete('/knowledge/bot', knowledgeRoute.botDelete);
     app.delete('/knowledge/world', knowledgeRoute.worldDelete);
@@ -112,6 +111,7 @@ conn.once('open', function() {
     app.put('/topics/:id', topicsRoute.update);
     app.delete('/topics/:id', topicsRoute.delete);
     app.post('/topics/:id/test', topicsRoute.test)
+    app.post('/topics/:id/sort', topicsRoute.sort)
   });
 
   var server = appServer.listen(port, function () {

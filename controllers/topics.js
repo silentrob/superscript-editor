@@ -70,23 +70,35 @@ module.exports = function(models, bot) {
       });
     },
 
+    sort: function(req, res) {
+      models.topic.findById(req.params.id, function(err, topic) {
+        topic.sortGambits(function() {
+          res.redirect('back');
+        });
+      });
+    },
+
     show: function(req, res) {
-      return models.topic.findById(req.params.id).populate('gambits').exec(function(error, topic) {
-        
-        // expand the replies too.
+
+      models.topic.findById(req.params.id, function(err, topic) {
         
         var iter = function (gambit, cb) {
           Reply.populate(gambit, { path: 'replies' }, cb);
         };
+        
+        models.topic.findById(req.params.id).populate('gambits').exec(function(error, topic) {
 
-        async.each(topic.gambits, iter, function done(err) {
-          // We bring in all the gambits so we can add them to the topic.
-          
-          models.gambit.find({},'_id, input', function(error, gambits) {
-            res.render('topics/get', {topic: topic, gambits:gambits });
+          async.each(topic.gambits, iter, function done(err) {
+            // We bring in all the gambits so we can add them to the topic.          
+            models.gambit.find({},'_id, input', function(error, gambits) {
+              res.render('topics/get', {topic: topic, gambits:gambits });
+            });
           });
         });
+
       });
+      
+
     },
 
     // Test a topic against input

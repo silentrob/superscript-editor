@@ -73,7 +73,7 @@ module.exports = function(models, bot) {
 
         me.save(function() {
           req.flash('success', 'Gambit updated.');
-          res.redirect('/gambits/' + req.params.id);          
+          res.redirect('/gambits/' + req.params.id);
         });
 
       });

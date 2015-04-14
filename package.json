@@ -26,7 +26,7 @@
     "express": "^4.11.2",
     "jade": "^1.9.1",
     "method-override": "^2.3.1",
-    "mongoose": "^3.8.22",
+    "mongoose": "~3.8.22",
     "morgan": "^1.5.1",
     "multer": "^0.1.7",
     "sfacts": "0.0.9",

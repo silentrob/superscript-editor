@@ -1,6 +1,6 @@
 {
   "name": "superscript-editor",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "A community editor for creating Chatter bots with SuperScript",
   "main": "app.js",
   "scripts": {
@@ -32,7 +32,7 @@
     "sfacts": "0.0.9",
     "slack-client": "^1.4.0",
     "socket.io": "^1.3.3",
-    "superscript": "^0.6.7",
+    "superscript": "latest",
     "underscore": "^1.7.0",
     "view-helpers": "^0.1.5",
     "mongoose-findorcreate": "^0.1.2"

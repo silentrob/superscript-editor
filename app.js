@@ -30,7 +30,8 @@ var botOptions = {
   mongoose : mongoose,
   factSystem: factSystem,
   editMode : true
-}
+};
+
 var botData = [];
 
 app.projectName = dbName;
@@ -90,34 +91,34 @@ conn.once('open', function() {
     app.delete('/replies/:id', repliesRoute.delete);
     
     app.post('/gambits/quick', gambitRoute.quickPost);
-    app.post('/gambits/:id', gambitRoute.post); 
+    app.post('/gambits/:id', gambitRoute.post);
 
     app.get('/gambits/new', gambitRoute.new);
-    app.put('/gambits/:id', gambitRoute.update); 
+    app.put('/gambits/:id', gambitRoute.update);
     app.get('/gambits/:id', gambitRoute.show);
-    app.delete('/gambits/:id', gambitRoute.delete); 
+    app.delete('/gambits/:id', gambitRoute.delete);
 
-    app.get('/gambits/:id/replies', gambitRoute.replies); 
+    app.get('/gambits/:id/replies', gambitRoute.replies);
 
-    app.post('/gambits/:id/reply', gambitRoute.reply); 
+    app.post('/gambits/:id/reply', gambitRoute.reply);
     app.delete('/gambits/:id/reply', gambitRoute.deleteReply);
-    app.put('/gambits/:id/reply/:rid', gambitRoute.updateReply); 
-    app.post('/gambits/:id/test', gambitRoute.test)
+    app.put('/gambits/:id/reply/:rid', gambitRoute.updateReply);
+    app.post('/gambits/:id/test', gambitRoute.test);
 
     // Topics
     app.get('/topics', topicsRoute.index);
-    app.post('/topics', topicsRoute.post); 
+    app.post('/topics', topicsRoute.post);
     app.get('/topics/:id', topicsRoute.show);
     app.put('/topics/:id', topicsRoute.update);
     app.delete('/topics/:id', topicsRoute.delete);
-    app.post('/topics/:id/test', topicsRoute.test)
-    app.post('/topics/:id/sort', topicsRoute.sort)
+    app.post('/topics/:id/test', topicsRoute.test);
+    app.post('/topics/:id/sort', topicsRoute.sort);
   });
 
   var server = appServer.listen(port, function () {
-    var host = server.address().address
-    var port = server.address().port
-    console.log('\n\n\tSuperScript Community Editor.\n\tListening at http://%s:%s\n\tBot Name: %s\n\n\tSwitch or create a new bot by starting `BOT=<name> node app.js`\n\n', host, port, dbName)
+    var host = server.address().address;
+    var port = server.address().port;
+    console.log('\n\n\tSuperScript Community Editor.\n\tListening at http://%s:%s\n\tBot Name: %s\n\n\tSwitch or create a new bot by starting `BOT=<name> node app.js`\n\n', host, port, dbName);
   });
 });
 

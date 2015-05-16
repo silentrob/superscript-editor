@@ -12,7 +12,7 @@ module.exports = function(models, bot) {
         models.gambit.find({}).populate('replies').exec(function(err, gambits){
           res.render('gambits/index', {gambits: gambits, topics:topics });
         });
-      });  
+      });
     },
 
     // Add a reply to a gambit
@@ -46,7 +46,7 @@ module.exports = function(models, bot) {
         rep.save(function(){
           var addMe = {$addToSet: {replies: rep._id}};
           models.gambit.findByIdAndUpdate(req.params.id, addMe, function(err, me) {
-            res.status(201).send(rep);  
+            res.status(201).send(rep);
           });
         });
       });
@@ -75,7 +75,6 @@ module.exports = function(models, bot) {
           req.flash('success', 'Gambit updated.');
           res.redirect('/gambits/' + req.params.id);
         });
-
       });
     },
 
@@ -85,8 +84,8 @@ module.exports = function(models, bot) {
         bot.message(req.body.phrase, function(err, messageObj){
           gambit.doesMatch(messageObj, function(err, result){
             res.json(result);
-          });                  
-        })
+          });
+        });
       });
     },
 
@@ -100,11 +99,11 @@ module.exports = function(models, bot) {
           input: req.body.input,
           isQuestion: isQuestion,
           qType: req.body.qType
-        }
+        };
         var gambit = new models.gambit(gambitParams);
         var replyParams = {
           reply: req.body.reply
-        }
+        };
 
         models.reply.create(replyParams, function(err, reply1){
           // if (err) return res.json(err);
@@ -112,20 +111,20 @@ module.exports = function(models, bot) {
           gambit.replies.addToSet(reply1._id);
           gambit.save(function(err) {
 
-            if (req.body.topicId == "" && req.body.replyId == "") {
+            if (req.body.topicId === "" && req.body.replyId === "") {
               models.topic.findOrCreate({name:'random'},  function(err, topic) {
                 var remMe = {$addToSet: {gambits: gambit._id }};
-                topic.update(remMe, function(err){ 
-                  topic.sortGambits();
-                  res.json({success:true}); 
+                topic.update(remMe, function(err){
+                  // topic.sortGambits();
+                  res.json({success:true});
                 });
               });
             } else if (req.body.topicId) {
               models.topic.findById(req.body.topicId,  function(err, topic) {
                 var remMe = {$addToSet: {gambits: gambit._id }};
-                topic.update(remMe, function(err){ 
+                topic.update(remMe, function(err){
                   topic.sortGambits();
-                  res.json({success:true}); 
+                  res.json({success:true});
                 });
               });
             } else if (req.body.replyId) {
@@ -142,8 +141,8 @@ module.exports = function(models, bot) {
 
 
     post: function(req, res) {
-      if (req.body.input == "") {
-        req.flash('error', 'Input is Required.')
+      if (req.body.input === "") {
+        req.flash('error', 'Input is Required.');
         res.redirect('back');
       } else {
         var isQuestion = (req.body.isQuestion == "on") ? true : false;
@@ -151,7 +150,7 @@ module.exports = function(models, bot) {
           input: req.body.input,
           isQuestion: isQuestion,
           qType: req.body.qType
-        }
+        };
 
         if (req.params.id) {
           gambitParams._id = req.params.id;
@@ -159,7 +158,7 @@ module.exports = function(models, bot) {
 
         var gambit = new models.gambit(gambitParams);
 
-        if (req.body.reply && req.body.reply != "") {
+        if (req.body.reply && req.body.reply !== "") {
           var replyParams = {
             reply: req.body.reply
           };
@@ -167,7 +166,7 @@ module.exports = function(models, bot) {
           models.reply.create(replyParams, function(err,reply){
             gambit.replies.addToSet(reply._id);
             gambit.save(function(err){
-              req.flash('success', 'Gambit Created')
+              req.flash('success', 'Gambit Created');
               res.redirect('/gambits/' + gambit._id);
             });
           });
@@ -179,20 +178,20 @@ module.exports = function(models, bot) {
             if (req.body.replyId) {
               var addMe = {$addToSet: {gambits: gambit._id}};
               models.reply.findByIdAndUpdate(req.body.replyId, addMe, function(err, me) {
-                req.flash('success', 'Gambit Created')
+                req.flash('success', 'Gambit Created');
                 res.redirect('/gambits/' + gambit._id);
               });
 
             } else if (req.body.topicId) {
               var addMe = {$addToSet: {gambits: gambit._id}};
               models.topic.findByIdAndUpdate(req.body.topicId, addMe, function(err, me) {
-                req.flash('success', 'Gambit Created')
+                req.flash('success', 'Gambit Created');
                 res.redirect('/gambits/' + gambit._id);
               });
             } else {
-              req.flash('success', 'Gambit Created')
+              req.flash('success', 'Gambit Created');
               res.redirect('/gambits/' + gambit._id);
-            }          
+            }
           });
         }
       }
@@ -205,7 +204,7 @@ module.exports = function(models, bot) {
         } else {
           return item.remove(function (err) {
             return res.redirect('/gambits');
-          });          
+          });
         }
       });
     },
@@ -262,5 +261,5 @@ module.exports = function(models, bot) {
         res.redirect("back");
       }
     }
-  }
-}
+  };
+};

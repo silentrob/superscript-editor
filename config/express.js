@@ -6,12 +6,13 @@
 var express = require('express');
 var compression = require('compression');
 var morgan = require('morgan');
+var winston = require('winston');
 var cookieParser = require('cookie-parser');
 var cookieSession = require('cookie-session');
 var bodyParser = require('body-parser');
 var methodOverride = require('method-override');
 var csrf = require('csurf');
-var multer = require('multer'); 
+var multer = require('multer');
 
 var flash = require('connect-flash');
 var helpers = require('view-helpers');
@@ -72,7 +73,7 @@ module.exports = function (app) {
     return filename.replace(/\W+/g, '-').toLowerCase() + Date.now()
   }
 }))
-  
+
   app.use(methodOverride(function (req, res) {
     if (req.body && typeof req.body === 'object' && '_method' in req.body) {
       // look in urlencoded POST bodies and delete it
@@ -88,7 +89,7 @@ module.exports = function (app) {
   // cookieParser should be above session
   app.use(cookieParser());
   app.use(cookieSession({ secret: 'secret' }));
-  
+
   // connect flash for flash messages - should be declared after sessions
   app.use(flash());
 
@@ -96,7 +97,7 @@ module.exports = function (app) {
     res.locals.success_messages = req.flash('success');
     res.locals.error_messages = req.flash('error');
     next();
-  });  
+  });
 
   // should be declared after session and flash
   app.use(helpers(pkg.name));

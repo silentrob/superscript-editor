@@ -27,6 +27,7 @@
     "jade": "^1.9.1",
     "method-override": "^2.3.1",
     "mongoose": "~3.8.22",
+    "mongoose-findorcreate": "^0.1.2",
     "morgan": "^1.5.1",
     "multer": "^0.1.7",
     "sfacts": "0.0.9",
@@ -35,7 +36,7 @@
     "superscript": "latest",
     "underscore": "^1.7.0",
     "view-helpers": "^0.1.5",
-    "mongoose-findorcreate": "^0.1.2"
+    "winston": "^1.0.0"
   },
   "devDependencies": {
     "debug": "^2.1.2",

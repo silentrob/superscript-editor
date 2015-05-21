@@ -103,12 +103,12 @@ script(id="botChat" type="text/html").
       {{/topicName}}
       
       {{#gambitId}}
-        <p><a href="/gambits/{{gambitId}}", target="_blank">{{string}}</a></p>
+        <p style="white-space: pre-wrap;"><a href="/gambits/{{gambitId}}", target="_blank">{{string}}</a></p>
       {{/gambitId}}
       
       {{^gambitId}}
         {{#string}}
-          <p>{{string}}</p>
+          <p style="white-space: pre-wrap;">{{string}}</p>
         {{/string}}
         
         {{^string}}

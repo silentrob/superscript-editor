@@ -13,7 +13,7 @@ var io = require('socket.io')(appServer);
 var port = process.env.PORT || 3000;
 var dbName = process.env.BOT || "testbot";
 
-var config = { db: 'mongodb://localhost/' + dbName }
+var config = { db: 'mongodb://localhost/' + dbName };
 var options = { server: { socketOptions: { keepAlive: 1 } } };
 var factSystem = sfact.create(dbName);
 
@@ -31,8 +31,6 @@ var botOptions = {
   factSystem: factSystem,
   editMode : true
 };
-
-var botData = [];
 
 app.projectName = dbName;
 var conn = mongoose.connection;

@@ -51,7 +51,7 @@ module.exports = function (app) {
 
   // set views path, template engine and default layout
   app.set('view engine', 'jade');
-  app.set('views', './views')
+  app.set('views', './views');
 
   // expose package.json to views
   app.use(function (req, res, next) {
@@ -70,9 +70,9 @@ module.exports = function (app) {
   app.use(multer({
   dest: './uploads/',
   rename: function (fieldname, filename) {
-    return filename.replace(/\W+/g, '-').toLowerCase() + Date.now()
+    return filename.replace(/\W+/g, '-').toLowerCase() + Date.now();
   }
-}))
+}));
 
   app.use(methodOverride(function (req, res) {
     if (req.body && typeof req.body === 'object' && '_method' in req.body) {
@@ -82,9 +82,6 @@ module.exports = function (app) {
       return method;
     }
   }));
-
-  // app.use(express.cookieParser('keyboard cat'));
-  // app.use(express.session({ cookie: { maxAge: 60000 }}));
 
   // cookieParser should be above session
   app.use(cookieParser());

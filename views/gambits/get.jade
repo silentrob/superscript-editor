@@ -15,7 +15,7 @@ block content
 
         //- code
         //-   pre= gambit
-        //-   pre= topics
+        //-   pre= topic
         //-   pre= parent
         //-   pre= reply
 
@@ -33,6 +33,8 @@ block content
         input(type="hidden", name="topicId", value="#{parent._id}")
       else 
         input(type="hidden", id="putMethod" name="_method", value="put")
+        if (topic)
+          input(type="hidden", name="topicId", value="#{topic._id}")
 
       .form-group
         label.col-sm-2.control-label(for='formName') Input
@@ -78,6 +80,17 @@ block content
             
       #replyGroup
 
+      if (topic)
+        .form-group
+          label.col-sm-2.control-label Topic
+          .col-xs-3
+            select#topics.form-control(name="topic")
+              each t in topics
+                if (String(t._id) === String(topic._id))
+                  option(value="#{t._id}" selected="selected")= topic.name
+                else
+                  option(value="#{t._id}")= t.name
+
       .form-group
         .col-sm-offset-2.col-sm-10
           if isNew
@@ -87,17 +100,19 @@ block content
             | 
             input#js-del.btn.btn-danger(type="button" name="delete" value="Delete Gambit")
 
-    if (topics.length != 0 || reply && parent)
+
+    // Gambits should only belong in one topic.
+    if (reply && parent || topic)
       .row
         .page-header
-          h3 This Gambit apprars in
-          ul
+          h3 This Gambit apprars in:
+          
           if reply && parent
-            li Reply: 
+            b Reply: 
               a(href="/gambits/#{parent._id}")=reply.reply
-          - for (var i = 0; i < topics.length; i++) 
-            li Topic: 
-              a(href="/topics/#{topics[i]._id}")=topics[i].name
+          else 
+            b Topic: 
+              a(href="/topics/#{topic._id}")=topic.name
 
     if (!isNew)
       .row
@@ -307,7 +322,7 @@ block content
         </div>
         
         <div class="col-sm-5">
-          <textarea class="reply form-control" placeholder="Reply" >{{reply}}</textarea>
+          <textarea class="reply form-control" rows="1" placeholder="Reply" >{{reply}}</textarea>
         </div>
         <div class="col-sm-2">
           {{#reply}}

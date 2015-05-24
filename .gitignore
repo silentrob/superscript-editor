@@ -7,3 +7,4 @@ test/*
 logs/*
 systemDB/*
 uploads/*
+plugins/wizard.js

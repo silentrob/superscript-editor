@@ -11,15 +11,13 @@ module.exports = function(models, bot, project) {
 
     settings: function(req, res) {
       Settings.find({key:'token'}, function(e,r){
-        
-        var token = (r && r.length != 0) ? r[0].value : "";
+        var token = (r && r.length !== 0) ? r[0].value : "";
         res.render('settings', {token:token});
-        
       });
     },
 
     postSlack: function(req, res) {
-      if (req.body.token != "") {
+      if (req.body.token !== "") {
         var prop = {key:'token', value: req.body.token };
         Settings.findOrCreate({key:'token'}, prop, function(err, item, isNew){
           item.save(function(err, result){
@@ -31,12 +29,20 @@ module.exports = function(models, bot, project) {
               };
               if (slackClient) {
                 req.flash('error', 'Slack Client Already Running');
+                res.redirect('back');
               } else {
-                slackClient = exec('node ./lib/slack.js', {env: evars});
-                req.flash('success', 'Slack Client Enabled');
+                slackClient = exec('node ./lib/slack.js', {env: evars},
+                  function (error, stdout, stderr) {
+                    console.log('stdout: ' + stdout);
+                    console.log('stderr: ' + stderr);
+                    if (error !== null) {
+                      console.log('exec error: ' + error);
+                    }
+                    req.flash('success', 'Slack Client Enabled');
+                    res.redirect('back');
+                  });
               }
-
-              res.redirect('back');
+              
             } else {
 
               if (slackClient) {
@@ -47,10 +53,10 @@ module.exports = function(models, bot, project) {
               res.redirect('back');
             }
           });
-        });        
+        });
       } else {
-        res.flash("error")
-        res.redirect('back');  
+        res.flash("error");
+        res.redirect('back');
       }
     },
 
@@ -66,13 +72,13 @@ module.exports = function(models, bot, project) {
       if (req.files && req.files.file && req.files.file.path) {
         models.importer(req.files.file.path, function(){
           req.flash("success","Data file Imported");
-          res.redirect("/");  
-        });        
+          res.redirect("/");
+        });
       } else {
         req.flash("error","Missing Data file.");
-        res.redirect("back");  
+        res.redirect("back");
       }
     }
 
-  }
-}
+  };
+};

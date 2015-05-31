@@ -111,6 +111,7 @@ conn.once('open', function() {
     app.delete('/topics/:id', topicsRoute.delete);
     app.post('/topics/:id/test', topicsRoute.test);
     app.post('/topics/:id/sort', topicsRoute.sort);
+    app.post('/topics/:id/reorder', topicsRoute.reorder);
   });
 
   var server = appServer.listen(port, function () {

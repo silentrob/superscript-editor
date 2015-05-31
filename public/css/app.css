@@ -31,3 +31,12 @@
 .hilite {
   background-color: yellow;
 }
+
+.sortable > li {
+  list-style: none;
+  border: 1px solid #CCC;
+  background: #efefef;
+  /*color: #1C94C4;*/
+  margin: 5px;
+  padding: 5px;
+}

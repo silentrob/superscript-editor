@@ -6,7 +6,17 @@ module.exports = function(models, bot) {
     index : function(req, res) {
       models.topic.find({}, null, {sort:{name:1}}, function(err, topics){
         res.render('topics/index', {topics: topics });
-      });  
+      });
+    },
+
+    reorder: function(req, res) {
+      models.topic.findById(req.params.id, function (err, topic) {
+        if (req.body.ids.length === topic.gambits.length) {
+          topic.gambits = req.body.ids;
+          topic.save();
+        }
+        return res.sendStatus(200);
+      });
     },
 
     post: function(req, res) {
@@ -16,18 +26,18 @@ module.exports = function(models, bot) {
       var keywords = req.body.keywords.split(",");
       var system = (req.body.system == "on") ? true : false;
 
-      if (topicName != "") {
+      if (topicName !== "") {
         new models.topic({name: topicName, keywords: keywords, system: system, keep:true }).save(function(err){
           if (req.body.name !== topicName) {
             req.flash('success', 'Gambit Created, but we changed the name.');
           } else {
-            req.flash('success', 'Gambit Created');  
+            req.flash('success', 'Gambit Created');
           }
 
           res.redirect('/topics');
-        });        
+        });
       } else {
-        req.flash('error', 'Topic Name is required.')
+        req.flash('error', 'Topic Name is required.');
         res.redirect("/topics");
       }
     },
@@ -40,19 +50,19 @@ module.exports = function(models, bot) {
       var system = (req.body.system == "on") ? true : false;
       var keep = (req.body.keep == "on") ? true : false;
 
-      if (topicName != "") {
+      if (topicName !== "") {
         models.topic.findById(req.params.id, function (err, topic) {
           topic.keywords = keywords;
           topic.name = topicName;
           topic.keep = keep;
           topic.system = system;
           topic.save(function(){
-            req.flash('success', 'Gambit Created');  
+            req.flash('success', 'Gambit Created');
             res.redirect('back');
           });
-        }); 
+        });
       } else {
-        req.flash('error', 'Topic Name is required.')
+        req.flash('error', 'Topic Name is required.');
         res.redirect("back");
       }
     },
@@ -65,7 +75,7 @@ module.exports = function(models, bot) {
         } else {
           return item.remove(function (err) {
             return res.sendStatus(200);
-          });          
+          });
         }
       });
     },
@@ -107,9 +117,9 @@ module.exports = function(models, bot) {
         bot.message(req.body.phrase, function(err, messageObj){
           topic.doesMatch(messageObj, function(err, result){
             res.json(result);
-          });                  
-        })
+          });
+        });
       });
     },
-  }
-}
+  };
+};

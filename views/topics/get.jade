@@ -69,7 +69,7 @@ block content
         //- code
         //-   pre= topic
 
-        ul
+        ul.sortable
           - for (var i = 0; i < topic.gambits.length; i++)
             li(id="#{topic.gambits[i]._id}")
               a(href="/gambits/#{topic.gambits[i]._id}")= topic.gambits[i].input
@@ -79,6 +79,24 @@ block content
                     a(href="/replies/#{topic.gambits[i].replies[j]._id}")= topic.gambits[i].replies[j].reply
 
       script.
+        $('.sortable').sortable().bind('sortupdate', function(e, ui) {
+          //Triggered when the user stopped sorting and the DOM position has changed.
+          var elements = $('.sortable > li');
+
+          var ids = elements.map(function(i, ex){ return ex.id; }).toArray();
+          $.ajax({
+            url: '/topics/#{topic._id}/reorder',
+            type: 'POST',
+            data: {
+              ids: ids
+            },
+            success: function(result) {
+              console.log("done", result);
+            }
+          });
+
+        });
+
         $('.js-submitTest').submit(function(e){
           e.preventDefault();
           $(".hilite").removeClass("hilite");
@@ -106,8 +124,6 @@ block content
 
                 swal("Tested", "Yay found matches", "success");
               } else {
-
-
                 swal({
                   title:"Tested", 
                   text: "'" + string + "' does not match.\n <a href='/gambits/new?topicId=#{topic._id}&input="+string+"'>Create Gambit</a>", 

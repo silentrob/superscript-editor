@@ -37,13 +37,10 @@ block content
 
       if (concepts)     
         table.table.table-bordered.table-condensed
-          tr 
           - for (var i = 0; i < concepts.length; i++)
-            if (i % 6 == 0) 
               tr
-            else
-              td 
-                a(href="/knowledge/concept/#{concepts[i].subject}")= concepts[i].subject
+                td 
+                  a(href="/knowledge/concept/#{concepts[i].subject}")= concepts[i].subject
 
   script.
     $('#datafile').change(function() {

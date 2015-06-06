@@ -1,10 +1,24 @@
+var _ = require("underscore");
 
 module.exports = function(models, bot) {
 
   return {
     index: function(req, res) {
       bot.factSystem.db.get({predicate: 'isa', object: 'concept' }, function(err, items){
-        res.render('knowledge/index',{concepts:items});  
+        res.render('knowledge/index',{concepts:items});
+      });
+    },
+
+    filter: function(req, res) {
+      params = {};
+      for (var x in req.query) {
+        if (req.query[x] !== "") {
+          params[x] = req.query[x];
+        }
+      }
+
+      bot.factSystem.db.get(params, function(err, items) {
+        res.render('knowledge/world', {concepts:items});
       });
     },
     
@@ -12,7 +26,6 @@ module.exports = function(models, bot) {
       bot.factSystem.db.get({subject:req.params.name}, function(err, data){
         res.render('knowledge/index',{concept: data});
       });
-
     },
 
     user: function(req, res) {
@@ -21,7 +34,7 @@ module.exports = function(models, bot) {
         if (user) {
           user.memory.db.get({}, function(err, items) {
             res.render('knowledge/user',{concepts:items});
-          });          
+          });
         } else {
           res.render('knowledge/user',{concepts:[]});
         }
@@ -35,7 +48,7 @@ module.exports = function(models, bot) {
         if (user) {
           user.memory.db.del(triple, function(err) {
             res.sendStatus(200);
-          });          
+          });
         } else {
           res.sendStatus(200);
         }
@@ -54,13 +67,11 @@ module.exports = function(models, bot) {
       var p = req.body.predicate;
       var v = req.body.object;
 
-      console.log(req.body)
-
       if (s && p && v) {
         bot.memory.create(req.body.subject, req.body.predicate, req.body.object, false , function(err, items) {
           req.flash('success', 'Fact Created');
           res.redirect('back');
-        });        
+        });
       } else {
         req.flash('error', 'Missing Value');
         res.redirect('back');
@@ -76,7 +87,7 @@ module.exports = function(models, bot) {
 
     botImport: function(req, res) {
       bot.memory.loadFile([req.files.file.path], function(){
-        res.redirect('back');  
+        res.redirect('back');
       });
     },
 
@@ -87,7 +98,6 @@ module.exports = function(models, bot) {
     },
 
     addWorld: function(req, res) {
-      console.log(req.body)
 
       var s = req.body.subject;
       var p = req.body.predicate;
@@ -97,7 +107,7 @@ module.exports = function(models, bot) {
         bot.factSystem.create(req.body.subject, req.body.predicate, req.body.object, false , function(err, items) {
           req.flash('success', 'Fact Created');
           res.redirect('back');
-        });        
+        });
       } else {
         req.flash('error', 'Missing Value');
         res.redirect('back');
@@ -106,7 +116,7 @@ module.exports = function(models, bot) {
 
     worldImport: function(req, res) {
       bot.factSystem.loadFile([req.files.file.path], function(){
-        res.redirect('back');  
+        res.redirect('back');
       });
     },
 
@@ -117,5 +127,5 @@ module.exports = function(models, bot) {
       });
     },
 
-  }
-}
+  };
+};

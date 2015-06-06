@@ -41,7 +41,6 @@ conn.once('open', function() {
 
   require('./config/express')(app);
    
-
   new ss(botOptions, function(err, botInstance){
     require('./config/chat')(io, botInstance, models);
 
@@ -68,6 +67,7 @@ conn.once('open', function() {
     app.get('/knowledge/bot', knowledgeRoute.bot);
     app.get('/knowledge/world', knowledgeRoute.world);
     app.get('/knowledge/concept/:name', knowledgeRoute.concept);
+    app.get('/knowledge/world/filter', knowledgeRoute.filter);
 
     app.post('/knowledge/bot', knowledgeRoute.addBot);
     app.post('/knowledge/world', knowledgeRoute.addWorld);

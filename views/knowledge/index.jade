@@ -15,7 +15,7 @@ block content
             | Load Concepts 
             input#datafile(type='file' name="file")
 
-      if (concept)
+      if (concept && concept.length !== 0)
         h3 Exploring #{concept[0].subject}
 
         table.table.table-bordered.table-condensed

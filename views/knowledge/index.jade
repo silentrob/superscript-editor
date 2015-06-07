@@ -37,10 +37,25 @@ block content
 
       if (concepts)     
         table.table.table-bordered.table-condensed
-          - for (var i = 0; i < concepts.length; i++)
+          - for (var i = 0; i < concepts.length; i += 5)
               tr
-                td 
-                  a(href="/knowledge/concept/#{concepts[i].subject}")= concepts[i].subject
+                - if (concepts[i])
+                  td 
+                    a(href="/knowledge/concept/#{concepts[i].subject}")= concepts[i].subject                
+                - if (concepts[i+1])
+                  td 
+                    a(href="/knowledge/concept/#{concepts[i+1].subject}")= concepts[i+1].subject
+                - if (concepts[i+2])
+                  td 
+                    a(href="/knowledge/concept/#{concepts[i+2].subject}")= concepts[i+2].subject
+                - if (concepts[i+3])
+                  td 
+                    a(href="/knowledge/concept/#{concepts[i+3].subject}")= concepts[i+3].subject
+                - if (concepts[i+4])
+                  td 
+                    a(href="/knowledge/concept/#{concepts[i+4].subject}")= concepts[i+4].subject
+
+
 
   script.
     $('#datafile').change(function() {

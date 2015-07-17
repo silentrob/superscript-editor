@@ -20,6 +20,11 @@ mixin subNav(tab)
     else
       +tab('User knowledge', '/knowledge/user')
       
+    //- if (tab == 'graph')
+    //-   +tab('Graph knowledge', '/knowledge/graph')(class='active')
+    //- else
+    //-   +tab('Graph knowledge', '/knowledge/graph')
+
 
 mixin tab(name, href)
   li(class!=attributes.class)

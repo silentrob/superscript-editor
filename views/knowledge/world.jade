@@ -6,7 +6,6 @@ block content
       include ../includes/_knoledgemenu.jade
       +subNav('world')
       
-
       br
 
       .form-group.pull-right
@@ -38,7 +37,6 @@ block content
 
         button.btn.btn-default(type='submit') Create Fact 
 
-
       .bs-callout.bs-callout-default
         h4 World Knowledge
         p This is general shared or common knowledge.
@@ -46,20 +44,19 @@ block content
       form.form-inline(action="/knowledge/world/filter" method="get")
         .form-group
           label.sr-only(for='subject') Subject 
-          input#subject.form-control(type='text', name="subject", placeholder='Subject') 
+          input#subject.form-control(type='text', name="subject", placeholder='Subject', value='#{params.subject||""}') 
           | &nbsp;
         .form-group
           label.sr-only(for='predicate') Predicate 
-          input#predicate.form-control(type='text', name="predicate", placeholder='Predicate') 
+          input#predicate.form-control(type='text', name="predicate", placeholder='Predicate', value='#{params.predicate||""}') 
           | &nbsp;
         .form-group
           label.sr-only(for='object') Object 
-          input#object.form-control(type='text', name="object", placeholder='Object') 
+          input#object.form-control(type='text', name="object", placeholder='Object', value='#{params.object||""}') 
           | &nbsp;
 
         button.btn.btn-default(type='submit') Filter Facts
         
-                  
       table.table.table-bordered.table-condensed
         thead
           tr
@@ -77,7 +74,6 @@ block content
               a(href="/knowledge/concept/#{concepts[i].object}")= concepts[i].object
             td
               a(data-s="#{concepts[i].subject}", data-p="#{concepts[i].predicate}", data-o="#{concepts[i].object}").js-del.btn.btn-danger.btn-xs Delete
-
 
   script.
     $('#datafile').change(function() {
@@ -112,6 +108,3 @@ block content
         });
       });
     });
-
-
-

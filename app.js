@@ -63,6 +63,7 @@ conn.once('open', function() {
     app.get('/plugins', pluginsRoute.getJSON);
 
     app.get('/knowledge', knowledgeRoute.index);
+    app.get('/knowledge/graph', knowledgeRoute.graph);
     app.get('/knowledge/user', knowledgeRoute.user);
     app.get('/knowledge/bot', knowledgeRoute.bot);
     app.get('/knowledge/world', knowledgeRoute.world);

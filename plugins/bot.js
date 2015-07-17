@@ -15,11 +15,11 @@ exports.getFavorite = function(thing, cb) {
   botfacts.get({subject:'favorite', predicate: cleanThing}, function(err, list) {
     if (!_.isEmpty(list)) {
       var favThing = Utils.pickItem(list);
-      var favThing = favThing.object.replace(/_/g, " ");
+      favThing = favThing.object.replace(/_/g, " ");
       cb(null, "My favorite " + thing + " is " + favThing + ".");
     } else {
       // Quibble can handle this.
       cb(null, "");
     }
   });
-}
+};

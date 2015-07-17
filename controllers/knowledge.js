@@ -9,6 +9,51 @@ module.exports = function(models, bot) {
       });
     },
 
+    graph: function(req, res) {
+      bot.factSystem.db.get({limit: 2000, offset: 0}, function(err, items){
+        var data1 = items.map(function(el, index){
+          return el.subject;
+        });
+        
+        var data2 = items.map(function(el, index){
+          return el.object;
+        });
+
+        var data = _.unique(data1.concat(data2));
+
+        // Gen IDs
+        var data3 = [];
+        data3 = data.map(function(item, index){
+          return {id:'xx_'+index, name:item};
+        });
+
+        // nodes
+        var nodes = data3.map(function(item, index){
+          return {data: item};
+        });
+
+        // Edges
+        var edges = items.map(function(item, index){
+          var sourceID, targetID;
+          for(var i = 0; i < data3.length; i++) {
+            if (data3[i].name === item.subject) {
+              sourceID = data3[i].id;
+            }
+          }
+          
+          for(var i = 0; i < data3.length; i++) {
+            if (data3[i].name === item.object) {
+              targetID = data3[i].id;
+            }
+          }
+
+          return { data: { source: sourceID, target: targetID } };
+        });
+
+        res.render('knowledge/graph', {nodes: nodes, edges: edges});
+      });
+    },
+
     filter: function(req, res) {
       params = {};
       for (var x in req.query) {
@@ -18,7 +63,7 @@ module.exports = function(models, bot) {
       }
 
       bot.factSystem.db.get(params, function(err, items) {
-        res.render('knowledge/world', {concepts:items});
+        res.render('knowledge/world', {concepts:items, params:params});
       });
     },
     
@@ -93,7 +138,7 @@ module.exports = function(models, bot) {
 
     world: function(req, res) {
       bot.factSystem.db.get({limit: 100, offset: 0}, function(err, items) {
-        res.render('knowledge/world', {concepts:items});
+        res.render('knowledge/world', {concepts:items, params: {}});
       });
     },
 

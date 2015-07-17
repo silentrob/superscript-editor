@@ -57,26 +57,116 @@ block content
         label.col-sm-2.control-label(for='reply') Question Type
         .col-xs-3
           select#qtype.form-control(name="qType")
-            option(value="") All Question Types
-            if gambit.qType == "WH"
-              option(value="WH" selected="") Question word
-            else 
-              option(value="WH") Question word
-            
-            if gambit.qType == "YN"
-              option(value="YN" selected="") Yes/No
-            else
-              option(value="YN" ) Yes/No
+            optgroup(label="Question Types")
+              //- option(value="") All Question Types
+              if gambit.qType == "WH"
+                option(value="WH" selected="") Question word
+              else 
+                option(value="WH") Question word
 
-            if gambit.qType == "TG"
-              option(value="TG" selected="") Tag Question
-            else
-              option(value="TG") Tag Question
+              if gambit.qType == "YN"
+                option(value="YN" selected="") Yes/No
+              else
+                option(value="YN" ) Yes/No
 
-            if gambit.qType == "CH"
-              option(value="CH" selected="") Choice Question
-            else
-              option(value="CH") Choice Question
+              if gambit.qType == "TG"
+                option(value="TG" selected="") Tag Question
+              else
+                option(value="TG") Tag Question
+
+              if gambit.qType == "CH"
+                option(value="CH" selected="") Choice Question
+              else
+                option(value="CH") Choice Question
+
+            optgroup(label="Answer Types")
+
+              if gambit.qSubType == "ABBR"
+                option(value="ABBR" selected="") Abbreviation
+              else
+                option(value="ABBR") Abbreviation
+
+              if gambit.qSubType == "ENTY"
+                option(value="ENTY" selected="") Entities
+              else
+                option(value="ENTY") Entities
+
+              if gambit.qSubType == "DESC"
+                option(value="DESC" selected="") Description
+              else
+                option(value="DESC") Description
+
+              if gambit.qSubType == "HUM"
+                option(value="HUM" selected="") Human
+              else
+                option(value="HUM") Human
+
+              if gambit.qSubType == "NUM"
+                option(value="NUM" selected="") Number
+              else
+                option(value="NUM") Number
+
+              if gambit.qSubType == "LOC"
+                option(value="LOC" selected="") Location
+              else
+                option(value="LOC") Location
+
+            //- ABBR        - abbreviation
+            //-   abb       - abbreviation
+            //-   exp       - expression abbreviated
+            //- ENTY        - entities
+            //-   animal    - animals
+            //-   body      - organs of body
+            //-   color     - colors
+            //-   creative  - inventions, books and other creative pieces
+            //-   currency  - currency names
+            //-   event     - events
+            //-   food      - food
+            //-   instrument - musical instrument
+            //-   lang      - languages
+            //-   letter    - letters like a-z
+            //-   other     - other entities
+            //-   plant     - plants
+            //-   product   - products
+            //-   religion  - religions
+            //-   sport     - sports
+            //-   substance - elements and substances
+            //-   symbol    - symbols and signs
+            //-   technique - techniques and methods
+            //-   term      - equivalent terms
+            //-   vehicle   - vehicles
+            //-   word      - words with a special property
+            //- DESC        - description and abstract concepts
+            //-   def       - definition of sth.
+            //-   desc      - description of sth.
+            //-   manner    - manner of an action
+            //-   reason    - reasons
+            //- HUM         - human beings
+            //-   group     - a group or organization of persons
+            //-   ind       - an individual
+            //-   title     - title of a person
+            //-   desc      - description of a person
+            //- LOC         - locations
+            //-   city      - cities
+            //-   country   - countries
+            //-   mountain  - mountains
+            //-   other     - other locations
+            //-   state     - states
+            //- NUM         - numeric values
+            //-   code      - postcodes, phone number or other codes
+            //-   count     - number of sth.
+            //-   expression - numeric mathmatical expression
+            //-   date      - dates
+            //-   distance  - linear measures
+            //-   money     - prices
+            //-   order     - ranks
+            //-   other     - other numbers
+            //-   period    - the lasting time of sth.
+            //-   percent   - fractions
+            //-   speed     - speed
+            //-   temp      - temperature
+            //-   size      - size, area and volume
+            //-   weight    - weight
             
       #replyGroup
 

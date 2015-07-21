@@ -12,8 +12,9 @@ var io = require('socket.io')(appServer);
 
 var port = process.env.PORT || 3000;
 var dbName = process.env.BOT || "testbot";
+var dbHost = process.env.DBHOST || "localhost";
 
-var config = { db: 'mongodb://localhost/' + dbName };
+var config = { db: 'mongodb://' + dbHost + '/' + dbName };
 var options = { server: { socketOptions: { keepAlive: 1 } } };
 var factSystem = sfact.create(dbName);
 
@@ -40,7 +41,7 @@ conn.once('open', function() {
   var models = require('superscript/lib/topics/index')(mongoose, factSystem);
 
   require('./config/express')(app);
-   
+
   new ss(botOptions, function(err, botInstance){
     require('./config/chat')(io, botInstance, models);
 
@@ -72,7 +73,7 @@ conn.once('open', function() {
 
     app.post('/knowledge/bot', knowledgeRoute.addBot);
     app.post('/knowledge/world', knowledgeRoute.addWorld);
-    
+
     app.delete('/knowledge/user', knowledgeRoute.userDelete);
     app.delete('/knowledge/bot', knowledgeRoute.botDelete);
     app.delete('/knowledge/world', knowledgeRoute.worldDelete);
@@ -88,7 +89,7 @@ conn.once('open', function() {
     app.get('/replies', repliesRoute.index);
     app.get('/replies/:id', repliesRoute.show);
     app.delete('/replies/:id', repliesRoute.delete);
-    
+
     app.post('/gambits/quick', gambitRoute.quickPost);
     app.post('/gambits/:id', gambitRoute.post);
 

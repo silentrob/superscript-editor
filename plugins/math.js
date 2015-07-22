@@ -1,15 +1,15 @@
 /*
 
-  Math functions for 
+  Math functions for
   - evaluating expressions
   - converting functions
   - sequence functions
 */
 
-var math = require("../node_modules/superscript/lib/math"); 
+var math = require("superscript/lib/math");
 var roman = require('roman-numerals');
 var debug = require("debug")("mathPlugin");
-var Utils = require("../node_modules/superscript/lib/utils");
+var Utils = require("superscript/lib/utils");
 
 exports.evaluateExpression = function(cb) {
   if (this.message.numericExp || (this.message.halfNumericExp && this.user.prevAns)) {
@@ -23,7 +23,7 @@ exports.evaluateExpression = function(cb) {
     cb(null, suggestedReply);
   } else {
     cb(true, "");
-  } 
+  }
 }
 
 exports.numToRoman = function(cb) {
@@ -41,7 +41,7 @@ exports.numToBinary = function(cb) {
   cb(null, suggest);
 }
 
- 
+
 exports.numMissing = function(cb) {
   // What number are missing 1, 3, 5, 7
   if (this.message.lemWords.indexOf("missing") != -1 && this.message.numbers.length != 0) {
@@ -70,7 +70,7 @@ exports.numSequence = function(cb) {
     debug("Finding the next number in the series")
     var numArray = this.message.numbers.map(function(item){return parseInt(item)})
     numArray = numArray.sort(function(a, b){return a-b});
-    
+
     if (math.arithGeo(numArray) == "Arithmetic") {
       for(var i = 1; i < numArray.length; i++) {
         var x = numArray[i] - numArray[i-1];
@@ -95,15 +95,13 @@ exports.evenOdd = function(cb) {
   if (message.numbers.length == 1) {
     var num = message.numbers[0];
     if (num % 2 == 0) {
-      cb(null,"It is even.");    
+      cb(null,"It is even.");
     } else {
-      cb(null,"It is odd.");  
+      cb(null,"It is odd.");
     }
-    
+
   } else {
     cb(null,"Which number ?");
   }
-  
+
 }
-
-

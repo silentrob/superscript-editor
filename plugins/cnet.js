@@ -1,8 +1,8 @@
 
 var debug = require("debug")("Reason Plugin");
-var history = require("../node_modules/superscript/lib/history");
-var Utils = require("../node_modules/superscript/lib/utils");
-var wd = require("../node_modules/superscript/lib/wordnet"); 
+var history = require("superscript/lib/history");
+var Utils = require("superscript/lib/utils");
+var wd = require("superscript/lib/wordnet"); 
 var _ = require("underscore");
 var moment = require("moment");
 
@@ -52,7 +52,7 @@ exports.isA = function(cb) {
             cb(null, "");
           } else {
             cb(null, result);
-          }          
+          }
         });
       }
     });
@@ -71,8 +71,7 @@ exports.isA = function(cb) {
       } else {
         // find example of thing?
         cb(null, "");
-      }      
+      }
     });
   }
 }
-

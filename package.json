@@ -37,12 +37,12 @@
     "superscript": "latest",
     "underscore": "^1.7.0",
     "view-helpers": "^0.1.5",
-    "winston": "^1.0.0"
-  },
-  "devDependencies": {
+    "winston": "^1.0.0",
     "debug": "^2.1.2",
     "moment": "^2.9.0",
     "request": "^2.53.0",
     "roman-numerals": "^0.3.2"
+  },
+  "devDependencies": {
   }
 }

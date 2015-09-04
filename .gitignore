@@ -8,3 +8,5 @@ logs/*
 systemDB/*
 uploads/*
 plugins/wizard.js
+superscript-editor.iml
+.idea

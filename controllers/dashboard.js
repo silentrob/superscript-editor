@@ -23,10 +23,13 @@ module.exports = function(models, bot, project) {
           item.save(function(err, result){
 
             if (req.body.start) {
-              var evars = {
-                'TOKEN': req.body.token,
-                'PROJECT': project
-              };
+              evars = {};
+              for(key in process.env) {
+                evars[key] = process.env[key];
+              }
+              evars.TOKEN = req.body.token;
+              evars.PROJECT = project;
+
               if (slackClient) {
                 req.flash('error', 'Slack Client Already Running');
                 res.redirect('back');

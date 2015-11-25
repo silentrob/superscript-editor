@@ -1,3 +1,5 @@
+# WARNING - This project is out of date and not maintained, please use at your own risk.
+
 # SSC Editor
 
 An entirly new way to create chatbots using SuperScript. Featuring a built-in realtime chat interface and gambit editor.
